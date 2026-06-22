@@ -1,0 +1,53 @@
+## Visual Studio / Rider / VSCode
+.vs/
+.idea/
+.vscode/
+
+## Build outputs
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+*.user
+*.suo
+*.userprefs
+*.cachefile
+
+## Test results
+[Tt]est[Rr]esult*/
+TestResults/
+
+## NuGet
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+
+## .NET tools
+.config/
+*.toolpath.json
+
+## Published output
+publish/
+*.pubxml
+
+## Node / frontend
+node_modules/
+**/node_modules/
+wwwroot/lib/
+wwwroot/dist/
+
+## OS files
+Thumbs.db
+.DS_Store
+
+## Temp / local files
+*.tmp
+*.bak
+*.swp
+
+## Database / secrets
+*.env
+appsettings.Development.json
+appsettings.Local.json
+secrets.json

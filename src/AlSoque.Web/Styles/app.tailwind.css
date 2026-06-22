@@ -1,0 +1,245 @@
+@import "tailwindcss";
+
+@source "../Features/**/*.razor";
+@source "../Shared/**/*.razor";
+@source "../Components/**/*.razor";
+
+/* ============ Design Tokens — هوية AlSoque (تيل عميق + نحاسي على عاجي) ============ */
+@theme {
+  --color-paper:       #f7f3ea;
+  --color-paper-soft:  #fdfbf6;
+  --color-paper-card:  rgba(255,255,255,.6);
+  --color-surface:     #ffffff;
+  --color-ink:         #1c1a17;
+  --color-ink-soft:    #5b5650;
+  --color-ink-faint:   #948d80;
+  --color-brand:       #1d5a6b;
+  --color-brand-dark:  #123e4a;
+  --color-brand-light: #2c7a8f;
+  --color-gold:        #b9803f;
+  --color-gold-soft:   #cf9d63;
+  --color-gold-deep:   #96672c;
+  --color-gold-tint:   #f3e6d2;
+  --color-sage:        #dde7e6;
+  --color-line:        #e6dfcd;
+
+  --font-naskh: "Noto Naskh Arabic", serif;
+  --font-kufi:  "Noto Kufi Arabic", sans-serif;
+
+  --radius-card: 16px;
+}
+
+/* ============ Base ============ */
+@layer base {
+  html { direction: rtl; scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
+  body {
+    @apply bg-paper text-ink font-naskh;
+    font-size: 17px;
+    line-height: 1.9;
+  }
+  h1, h2, h3, h4 { @apply font-kufi text-brand-dark; line-height: 1.4; font-weight: 600; }
+  a { @apply text-brand-light transition-colors; }
+  a:hover { @apply text-gold-deep; }
+  ::selection { background: var(--color-gold-soft); color: var(--color-brand-dark); }
+}
+
+/* ============ Components (الأصناف الدلالية الموحّدة) ============ */
+@layer components {
+
+  /* تخطيط */
+  .container-page { @apply mx-auto w-full max-w-6xl px-4 md:px-6; }
+  .stack { @apply flex flex-col gap-6; }
+
+  /* شريط التنقل */
+  .navbar     { @apply sticky top-0 z-40 border-b border-line bg-paper/90 backdrop-blur; }
+  .nav-inner  { @apply flex items-center justify-between h-[70px] mx-auto w-full max-w-6xl px-4 md:px-6; }
+  .nav-brand  { @apply flex items-center gap-3; }
+  .nav-seal   { @apply inline-flex items-center justify-center w-11 h-11 rounded-xl border border-gold-soft font-kufi font-bold text-lg text-brand; background: radial-gradient(circle at 35% 30%, #fff, var(--color-gold-tint)); }
+  .nav-title  { @apply font-kufi font-semibold text-lg text-brand-dark leading-tight; }
+  .nav-sub    { @apply font-kufi text-[11px] text-ink-faint tracking-wide; }
+  .nav-link   { @apply relative px-3.5 py-2.5 rounded-lg font-kufi text-sm text-ink-soft hover:bg-sage/60 hover:text-brand transition; }
+  .nav-link-active { @apply text-brand-dark font-bold bg-transparent; }
+
+  /* بطاقة عنوان الصفحة */
+  .page-hero  { @apply relative overflow-hidden rounded-3xl border border-line bg-paper-soft px-6 py-12 md:py-14 text-center mb-10; }
+  .page-hero::after { content: ""; @apply block w-16 h-px bg-gold mx-auto mt-4; }
+  .page-hero h1 { @apply font-kufi text-3xl md:text-4xl font-bold text-brand-dark mb-2; }
+  .page-hero p  { @apply text-ink-soft text-lg max-w-2xl mx-auto; }
+
+  /* عنوان قسم بخط فاصل */
+  .heading-rule       { @apply flex items-center gap-4 my-8; }
+  .heading-rule h2    { @apply font-kufi text-2xl text-brand-dark whitespace-nowrap m-0; }
+  .heading-rule .rule { @apply flex-1 h-px bg-gradient-to-l from-line to-transparent; }
+
+  /* البطاقات والأقسام */
+  .card         { border-radius: var(--radius-card); @apply relative border border-line bg-surface p-6 md:p-7 transition; }
+  .card:hover   { @apply -translate-y-0.5; box-shadow: 0 24px 46px -34px rgba(18,62,74,.5); }
+  .section-card { border-radius: var(--radius-card); @apply border border-line bg-surface p-6 md:p-7; }
+  .section-head { @apply flex items-center gap-3 mb-5 border-b border-line pb-3; }
+  .section-title{ @apply font-kufi text-xl md:text-2xl text-brand-dark m-0; }
+
+  /* بطاقة عالم */
+  .scholar-card       { border-radius: var(--radius-card); @apply border border-line bg-surface p-5 flex flex-col gap-2 transition hover:-translate-y-0.5; }
+  .scholar-card:hover { box-shadow: 0 24px 46px -34px rgba(18,62,74,.5); }
+  .scholar-card .name { @apply font-kufi text-lg text-brand-dark; }
+  .scholar-card .meta { @apply text-sm text-ink-soft; }
+  .family-badge       { @apply inline-block rounded-full px-3 py-0.5 text-xs font-kufi bg-sage text-brand; }
+
+  /* روابط داخل المتن */
+  .scholar-link { @apply font-semibold text-brand-dark underline decoration-dotted decoration-gold-soft underline-offset-4 hover:text-gold-deep hover:decoration-gold transition; }
+  .book-link    { @apply text-brand-light underline decoration-dashed decoration-line underline-offset-4 hover:text-gold-deep hover:decoration-gold transition; }
+
+  /* فقرات النص */
+  .para { @apply text-justify leading-loose mb-4; }
+
+  /* الأزرار */
+  .btn,
+  .btn-primary,
+  .btn-outline,
+  .btn-gold     { @apply inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 font-kufi text-sm font-bold transition cursor-pointer border border-transparent; }
+  .btn-primary  { @apply bg-brand text-paper-soft hover:bg-brand-dark hover:-translate-y-px; }
+  .btn-outline  { @apply bg-transparent border-line text-brand hover:border-gold hover:text-brand-dark; }
+  .btn-gold     { @apply bg-gold text-paper-soft hover:bg-gold-deep; }
+
+  /* النماذج */
+  .field        { @apply flex flex-col gap-1.5 mb-4; }
+  .field-label  { @apply font-kufi text-sm text-brand-dark; }
+  .field-input,
+  .field-textarea,
+  .field-select { @apply rounded-xl border border-line bg-surface px-4 py-3 font-naskh text-ink outline-none focus:border-gold focus:ring-2 focus:ring-gold/25 transition w-full; }
+  .field-textarea { @apply min-h-32 resize-y; }
+  .field-error  { @apply text-sm text-red-700; }
+  .form-card    { border-radius: var(--radius-card); @apply border border-line bg-surface p-6 md:p-7 max-w-2xl mx-auto; }
+
+  /* الجداول (الإدارة) */
+  .table-wrap   { border-radius: var(--radius-card); @apply border border-line bg-surface overflow-x-auto p-0; }
+  .data-table   { @apply w-full text-right border-collapse; }
+  .data-table th{ @apply font-kufi text-sm text-paper-soft bg-brand px-4 py-3; }
+  .data-table td{ @apply px-4 py-3 border-b border-line align-top; }
+
+  /* شارات */
+  .badge        { @apply inline-block rounded-full px-3 py-0.5 text-xs font-kufi; }
+  .badge-pending{ @apply inline-block rounded-full px-3 py-0.5 text-xs font-kufi bg-amber-100 text-amber-800; }
+  .badge-ok     { @apply inline-block rounded-full px-3 py-0.5 text-xs font-kufi bg-emerald-100 text-emerald-800; }
+  .badge-rejected{ @apply inline-block rounded-full px-3 py-0.5 text-xs font-kufi bg-red-100 text-red-800; }
+
+  /* تذييل */
+  .footer       { @apply mt-16 border-t border-line bg-surface; }
+  .footer-inner { @apply py-10 mx-auto w-full max-w-6xl px-4 md:px-6 text-center; }
+  .footer-bottom{ @apply text-xs font-kufi text-ink-faint; }
+}
+
+/* ============ واجهة Blazor الإطارية (شريط الخطأ + نافذة إعادة الاتصال) ============ */
+#blazor-error-ui {
+    color-scheme: light only;
+    background: lightyellow;
+    bottom: 0;
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+    display: none;
+    left: 0;
+    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+#blazor-error-ui .dismiss {
+    cursor: pointer;
+    position: absolute;
+    right: 0.75rem;
+    top: 0.5rem;
+}
+
+.components-reconnect-first-attempt-visible,
+.components-reconnect-repeated-attempt-visible,
+.components-reconnect-failed-visible,
+.components-pause-visible,
+.components-resume-failed-visible,
+.components-rejoining-animation {
+    display: none;
+}
+#components-reconnect-modal.components-reconnect-show .components-reconnect-first-attempt-visible,
+#components-reconnect-modal.components-reconnect-show .components-rejoining-animation,
+#components-reconnect-modal.components-reconnect-paused .components-pause-visible,
+#components-reconnect-modal.components-reconnect-resume-failed .components-resume-failed-visible,
+#components-reconnect-modal.components-reconnect-retrying,
+#components-reconnect-modal.components-reconnect-retrying .components-reconnect-repeated-attempt-visible,
+#components-reconnect-modal.components-reconnect-retrying .components-rejoining-animation,
+#components-reconnect-modal.components-reconnect-failed,
+#components-reconnect-modal.components-reconnect-failed .components-reconnect-failed-visible {
+    display: block;
+}
+#components-reconnect-modal {
+    background-color: white;
+    width: 20rem;
+    margin: 20vh auto;
+    padding: 2rem;
+    border: 0;
+    border-radius: 0.5rem;
+    box-shadow: 0 3px 6px 2px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transition: display 0.5s allow-discrete, overlay 0.5s allow-discrete;
+    animation: components-reconnect-modal-fadeOutOpacity 0.5s both;
+}
+#components-reconnect-modal[open] {
+    animation: components-reconnect-modal-slideUp 1.5s cubic-bezier(.05, .89, .25, 1.02) 0.3s, components-reconnect-modal-fadeInOpacity 0.5s ease-in-out 0.3s;
+    animation-fill-mode: both;
+}
+#components-reconnect-modal::backdrop {
+    background-color: rgba(0, 0, 0, 0.4);
+    animation: components-reconnect-modal-fadeInOpacity 0.5s ease-in-out;
+    opacity: 1;
+}
+@keyframes components-reconnect-modal-slideUp {
+    0% { transform: translateY(30px) scale(0.95); }
+    100% { transform: translateY(0); }
+}
+@keyframes components-reconnect-modal-fadeInOpacity {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+@keyframes components-reconnect-modal-fadeOutOpacity {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
+}
+.components-reconnect-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+#components-reconnect-modal p {
+    margin: 0;
+    text-align: center;
+}
+#components-reconnect-modal button {
+    border: 0;
+    background-color: #6b9ed2;
+    color: white;
+    padding: 4px 24px;
+    border-radius: 4px;
+}
+#components-reconnect-modal button:hover { background-color: #3b6ea2; }
+#components-reconnect-modal button:active { background-color: #6b9ed2; }
+.components-rejoining-animation {
+    position: relative;
+    width: 80px;
+    height: 80px;
+}
+.components-rejoining-animation div {
+    position: absolute;
+    border: 3px solid #0087ff;
+    opacity: 1;
+    border-radius: 50%;
+    animation: components-rejoining-animation 1.5s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+.components-rejoining-animation div:nth-child(2) { animation-delay: -0.5s; }
+@keyframes components-rejoining-animation {
+    0% { top: 40px; left: 40px; width: 0; height: 0; opacity: 0; }
+    4.9% { top: 40px; left: 40px; width: 0; height: 0; opacity: 0; }
+    5% { top: 40px; left: 40px; width: 0; height: 0; opacity: 1; }
+    100% { top: 0px; left: 0px; width: 80px; height: 80px; opacity: 0; }
+}

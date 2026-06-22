@@ -1,0 +1,6 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/AlSoque.Data/AlSoque.Data.csproj" />
+    <Project Path="src/AlSoque.Web/AlSoque.Web.csproj" />
+  </Folder>
+</Solution>

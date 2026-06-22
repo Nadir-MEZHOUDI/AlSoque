@@ -1,0 +1,38 @@
+<header class="navbar">
+    <div class="nav-inner">
+        <a href="/" class="nav-brand">
+            <span class="nav-seal">س</span>
+            <span>
+                <span class="nav-title block">السوق</span>
+                <span class="nav-sub block">تراجم وتاريخ وتراث علماء السوق</span>
+            </span>
+        </a>
+
+        <nav class="flex items-center gap-1">
+            <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">الرئيسية</NavLink>
+            <NavLink class="nav-link" href="/scholars">العلماء</NavLink>
+            <NavLink class="nav-link" href="/books">الكتب</NavLink>
+            <NavLink class="nav-link" href="/manuscripts">المخطوطات</NavLink>
+
+            <AuthorizeView>
+                <Authorized>
+                    <AuthorizeView Roles="@AppRoles.Admin" Context="adminContext">
+                        <Authorized>
+                            <NavLink class="nav-link" href="/admin">لوحة الإدارة</NavLink>
+                        </Authorized>
+                    </AuthorizeView>
+                    <NavLink class="nav-link" href="/contribute">ساهم بترجمة</NavLink>
+                    <form action="Account/Logout" method="post" class="inline">
+                        <AntiforgeryToken />
+                        <input type="hidden" name="returnUrl" value="/" />
+                        <button type="submit" class="nav-link">خروج (@context.User.Identity?.Name)</button>
+                    </form>
+                </Authorized>
+                <NotAuthorized>
+                    <NavLink class="nav-link" href="Account/Login">دخول</NavLink>
+                    <NavLink class="btn btn-gold" href="Account/Register">تسجيل جديد</NavLink>
+                </NotAuthorized>
+            </AuthorizeView>
+        </nav>
+    </div>
+</header>

@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>aspnet-AlSoque_Web-5d0b8523-03e0-47dd-b618-eb8349848291</UserSecretsId>
+    <BlazorDisableThrowNavigationException>true</BlazorDisableThrowNavigationException>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="10.0.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.9">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AlSoque.Data\AlSoque.Data.csproj" />
+  </ItemGroup>
+
+  <!-- ============ Tailwind v4 build ============
+       Source: Styles/app.tailwind.css + .razor تحت Features/, Shared/, Components/.
+       ناتج:  wwwroot/app.css — لا يُحرَّر يدويًا.
+       تخطّي: dotnet build /p:SkipTailwind=true -->
+  <Target Name="BuildTailwind"
+          BeforeTargets="Build"
+          Inputs="Styles/app.tailwind.css;$(MSBuildThisFileDirectory)Features/**/*.razor;$(MSBuildThisFileDirectory)Shared/**/*.razor;$(MSBuildThisFileDirectory)Components/**/*.razor"
+          Outputs="wwwroot/app.css"
+          Condition="'$(SkipTailwind)' != 'true'">
+    <Exec Command="npx @tailwindcss/cli -i Styles/app.tailwind.css -o wwwroot/app.css --minify"
+          WorkingDirectory="$(MSBuildThisFileDirectory)" />
+  </Target>
+
+</Project>

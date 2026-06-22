@@ -1,0 +1,8 @@
+{
+  "name": "alsoque-web",
+  "private": true,
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.0",
+    "tailwindcss": "^4.1.0"
+  }
+}
