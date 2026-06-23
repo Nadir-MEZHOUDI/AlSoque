@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 namespace AlSoque.Data.Entities;
 
 /// <summary>
-/// كتاب من تأليف عالم من علماء السوق
+/// كتاب من تأليف عالم من علماء آل سوق
 /// </summary>
 public class Book : BaseEntity
 {

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 namespace AlSoque.Data.Entities;
 
 /// <summary>
-/// مخطوطة أو وثيقة تاريخية أو إجازة أو صورة من تراث السوق
+/// مخطوطة أو وثيقة تاريخية أو إجازة أو صورة من تراث آل سوق
 /// </summary>
 public class Manuscript : BaseEntity
 {

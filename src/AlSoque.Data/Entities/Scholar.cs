@@ -4,7 +4,7 @@ using AlSoque.Data.Extensions;
 namespace AlSoque.Data.Entities;
 
 /// <summary>
-/// عالم من علماء السوق
+/// عالم من علماء آل سوق
 /// </summary>
 public class Scholar : BaseEntity
 {

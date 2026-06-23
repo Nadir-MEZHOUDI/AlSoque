@@ -46,7 +46,7 @@ public static class DemoDataSeeder
             TowofiyaBi = "السوق",
             Slug = "mohamed-al-faqih-al-souqi",
             Family = alFiqhi,
-            Biography = "ترجمة تجريبية لغرض تطوير الواجهة. كان من أبرز فقهاء بلدة السوق في زمانه، طلب العلم وتصدّر للتدريس والفتوى. تُستبدل هذه السيرة بمحتوى موثّق عند توفّره.",
+            Biography = "ترجمة تجريبية لغرض تطوير الواجهة. كان من أبرز فقهاء آل سوق في زمانه، طلب العلم وتصدّر للتدريس والفتوى. تُستبدل هذه السيرة بمحتوى موثّق عند توفّره.",
             Specializations = [fiqh, usul],
         };
 
@@ -130,7 +130,7 @@ public static class DemoDataSeeder
             new Book
             {
                 Title = "تفسير آيات الأحكام",
-                Description = "ترجمة تجريبية — تفسير مفترض لغرض تطوير الواجهة، يُعدّ من مفقودات تراث السوق.",
+                Description = "ترجمة تجريبية — تفسير مفترض لغرض تطوير الواجهة، يُعدّ من مفقودات تراث آل سوق.",
                 Status = BookStatus.Lost,
                 Slug = "tafsir-ayat-al-ahkam",
                 Scholar = sheikhAbdelkader,

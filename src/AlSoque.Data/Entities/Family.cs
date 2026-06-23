@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 namespace AlSoque.Data.Entities;
 
 /// <summary>
-/// أسرة من أسر علماء السوق — السوقيون ينتمون لأسر متعددة لا أسرة واحدة
+/// أسرة من أسر علماء آل سوق — السوقيون ينتمون لأسر متعددة لا أسرة واحدة
 /// </summary>
 public class Family : BaseEntity
 {

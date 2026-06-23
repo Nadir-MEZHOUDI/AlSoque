@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-AlSoque is an Arabic-language Blazor Server site documenting the biographies, history, and heritage of scholars from the "AlSouq" region. `D:\Projects\AGENTS.md` (company-wide standards) and `D:\Projects\CLAUDE.md` apply on top of this file — don't repeat them. `AGENTS.md` in this repo's root has the same content as this file in Arabic; keep them in sync if you change one.
+AlSoque is an Arabic-language Blazor Server site documenting the biographies, history, and heritage of scholars belonging to "Al Souq" (آل سوق). `D:\Projects\AGENTS.md` (company-wide standards) and `D:\Projects\CLAUDE.md` apply on top of this file — don't repeat them. `AGENTS.md` in this repo's root has the same content as this file in Arabic; keep them in sync if you change one.
 
 ## Commands
 
