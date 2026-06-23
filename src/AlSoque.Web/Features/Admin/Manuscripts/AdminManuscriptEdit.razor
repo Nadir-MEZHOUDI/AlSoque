@@ -1,0 +1,138 @@
+@page "/admin/manuscripts/{Id:int}/edit"
+@attribute [Authorize(Roles = AppRoles.Admin)]
+@using AlSoque.Data.Entities
+@using AlSoque.Web.Features.Admin.Manuscripts
+@using AlSoque.Web.Shared
+@inject AdminManuscriptsService ManuscriptsService
+@inject NavigationManager NavigationManager
+
+<PageTitle>@(Id == 0 ? "إضافة مخطوطة" : "تعديل مخطوطة") — الإدارة</PageTitle>
+
+<section class="page-hero">
+    <h1>@(Id == 0 ? "إضافة مخطوطة/وثيقة" : "تعديل مخطوطة/وثيقة")</h1>
+</section>
+
+@if (manuscript is null || scholars is null || families is null)
+{
+    <p class="text-ink-soft">جارٍ التحميل...</p>
+}
+else
+{
+    @if (errorMessage is not null)
+    {
+        <p class="field-error mb-4">@errorMessage</p>
+    }
+
+    <div class="form-card">
+        <div class="field">
+            <label class="field-label">العنوان</label>
+            <input class="field-input" @bind="manuscript.Title" />
+        </div>
+        <div class="field">
+            <label class="field-label">المعرّف في الرابط (Slug)</label>
+            <div class="flex gap-2">
+                <input class="field-input" @bind="manuscript.Slug" />
+                <button type="button" class="btn btn-outline" @onclick="GenerateSlug">توليد</button>
+            </div>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-4">
+            <div class="field">
+                <label class="field-label">الفئة</label>
+                <select class="field-select" @bind="manuscript.Category">
+                    <option value="@ManuscriptCategory.Manuscript">مخطوطة</option>
+                    <option value="@ManuscriptCategory.Document">وثيقة</option>
+                    <option value="@ManuscriptCategory.Ijaza">إجازة</option>
+                    <option value="@ManuscriptCategory.Photo">صورة</option>
+                </select>
+            </div>
+            <div class="field">
+                <label class="field-label">تاريخ تقديري (هـ)</label>
+                <input type="number" class="field-input" @bind="manuscript.EstimatedYear" />
+            </div>
+            <div class="field">
+                <label class="field-label">العالم المتعلِّقة به (اختياري)</label>
+                <select class="field-select" @bind="manuscript.ScholarId">
+                    <option value="">غير محدَّد</option>
+                    @foreach (var scholar in scholars)
+                    {
+                        <option value="@scholar.Id">@scholar.FullName</option>
+                    }
+                </select>
+            </div>
+            <div class="field">
+                <label class="field-label">الأسرة المتعلِّقة بها (اختياري)</label>
+                <select class="field-select" @bind="manuscript.FamilyId">
+                    <option value="">غير محدَّدة</option>
+                    @foreach (var family in families)
+                    {
+                        <option value="@family.Id">@family.Name</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="field">
+            <label class="field-label">الوصف</label>
+            <textarea class="field-textarea" @bind="manuscript.Description"></textarea>
+        </div>
+
+        <div class="flex gap-3 mt-4">
+            <button class="btn btn-primary" @onclick="SaveAsync">حفظ</button>
+            <a class="btn btn-outline" href="/admin/manuscripts">إلغاء</a>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private Manuscript? manuscript;
+    private List<Scholar>? scholars;
+    private List<Family>? families;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        scholars = await ManuscriptsService.GetScholarsAsync();
+        families = await ManuscriptsService.GetFamiliesAsync();
+
+        manuscript = Id == 0 ? new Manuscript() : await ManuscriptsService.GetByIdAsync(Id);
+    }
+
+    private void GenerateSlug()
+    {
+        if (manuscript is not null)
+        {
+            manuscript.Slug = SlugHelper.Slugify(manuscript.Title);
+        }
+    }
+
+    private async Task SaveAsync()
+    {
+        errorMessage = null;
+        if (manuscript is null)
+        {
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(manuscript.Title))
+        {
+            errorMessage = "عنوان المخطوطة/الوثيقة مطلوب.";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(manuscript.Slug))
+        {
+            manuscript.Slug = SlugHelper.Slugify(manuscript.Title);
+        }
+
+        if (await ManuscriptsService.IsSlugTakenAsync(manuscript.Slug, Id == 0 ? null : Id))
+        {
+            errorMessage = "هذا المعرّف (Slug) مستخدَم بالفعل، اختر معرّفًا آخر.";
+            return;
+        }
+
+        await ManuscriptsService.SaveAsync(manuscript);
+        NavigationManager.NavigateTo("/admin/manuscripts");
+    }
+}

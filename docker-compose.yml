@@ -1,0 +1,30 @@
+name: AlSoque.Web
+
+services:
+  web:
+    image: ghcr.io/nadir-mezhoudi/alsoque-web:latest
+    build:
+      context: .
+      dockerfile: src/AlSoque.Web/Dockerfile
+    container_name: alsoque-web-app
+    ports:
+      - "127.0.0.1:8089:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=AlSoqueDb;Username=postgres;Password=5512;
+      - SeedAdmin__Email=admin@alsoque.net
+      - SeedAdmin__Password=ChangeMe123!
+    networks:
+      - shared-net
+    user: "0:0"
+    volumes:
+      - dpkeys:/app/dpkeys
+    restart: unless-stopped
+
+volumes:
+  dpkeys:
+
+networks:
+  shared-net:
+    external: true

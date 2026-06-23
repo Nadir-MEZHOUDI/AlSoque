@@ -29,6 +29,23 @@
         <DataAnnotationsValidator />
         <ValidationSummary class="field-error" role="alert" />
         <div class="field">
+            <label for="Input.FullName" class="field-label">الاسم الكامل</label>
+            <InputText @bind-Value="Input.FullName" id="Input.FullName" class="field-input" autocomplete="name" aria-required="true" placeholder="الاسم الكامل" />
+            <ValidationMessage For="() => Input.FullName" class="field-error" />
+        </div>
+        <div class="grid sm:grid-cols-2 gap-4">
+            <div class="field">
+                <label for="Input.Country" class="field-label">الدولة</label>
+                <InputText @bind-Value="Input.Country" id="Input.Country" class="field-input" autocomplete="country-name" aria-required="true" placeholder="الدولة" />
+                <ValidationMessage For="() => Input.Country" class="field-error" />
+            </div>
+            <div class="field">
+                <label for="Input.City" class="field-label">المدينة</label>
+                <InputText @bind-Value="Input.City" id="Input.City" class="field-input" autocomplete="address-level2" aria-required="true" placeholder="المدينة" />
+                <ValidationMessage For="() => Input.City" class="field-error" />
+            </div>
+        </div>
+        <div class="field">
             <label for="Input.Email" class="field-label">البريد الإلكتروني</label>
             <InputText @bind-Value="Input.Email" id="Input.Email" class="field-input" autocomplete="username" aria-required="true" placeholder="name@example.com" />
             <ValidationMessage For="() => Input.Email" class="field-error" />
@@ -69,6 +86,10 @@
     public async Task RegisterUser(EditContext editContext)
     {
         var user = CreateUser();
+        user.FullName = Input.FullName;
+        user.DisplayName = Input.FullName;
+        user.Country = Input.Country;
+        user.City = Input.City;
 
         await UserStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
         var emailStore = GetEmailStore();
@@ -130,6 +151,18 @@
 
     private sealed class InputModel
     {
+        [Required(ErrorMessage = "الاسم الكامل مطلوب")]
+        [Display(Name = "Full name")]
+        public string FullName { get; set; } = "";
+
+        [Required(ErrorMessage = "الدولة مطلوبة")]
+        [Display(Name = "Country")]
+        public string Country { get; set; } = "";
+
+        [Required(ErrorMessage = "المدينة مطلوبة")]
+        [Display(Name = "City")]
+        public string City { get; set; } = "";
+
         [Required]
         [EmailAddress]
         [Display(Name = "Email")]

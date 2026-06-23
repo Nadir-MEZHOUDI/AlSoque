@@ -1,0 +1,55 @@
+trigger:
+  branches:
+    include:
+    - master
+pool:
+  vmImage: 'ubuntu-latest'
+variables:
+  - name: vpsComposeFile
+    value: 'docker-compose.yml'
+stages:
+- stage: BuildAndPush
+  displayName: Build & Push Image
+  jobs:
+  - job: BuildPush
+    displayName: Build and push to GHCR
+    steps:
+    - task: 6d15af64-176c-496d-b583-fd2ae21d4df4@1
+      inputs:
+        repository: self
+    - task: Docker@2
+      displayName: Login GHCR
+      inputs:
+        command: login
+        containerRegistry: 'ghcr-login'
+    - task: Docker@2
+      displayName: Build and Push
+      inputs:
+        command: buildAndPush
+        repository: 'nadir-mezhoudi/alsoque-web'
+        dockerfile: 'src/AlSoque.Web/Dockerfile'
+        buildContext: .
+        tags: |
+          latest
+          $(Build.BuildNumber)
+- stage: Deploy
+  displayName: Deploy to VPS
+  dependsOn:
+  - BuildAndPush
+  condition: succeeded()
+  jobs:
+  - job: DeployVps
+    displayName: SSH deploy
+    steps:
+    - task: SSH@0
+      displayName: Pull & Up on VPS
+      inputs:
+        sshEndpoint: 'vps-ssh'
+        runOptions: 'inline'
+        inline: |-
+          set -e
+          cd /opt/AlSoque
+          docker network ls | grep -q "shared-net" || docker network create shared-net
+          (docker compose -f $(vpsComposeFile) pull) 2>&1
+          (docker compose -f $(vpsComposeFile) up -d --remove-orphans) 2>&1
+          (docker compose -f $(vpsComposeFile) ps) 2>&1

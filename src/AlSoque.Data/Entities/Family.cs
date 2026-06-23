@@ -15,4 +15,6 @@ public class Family : BaseEntity
     public string Slug { get; set; } = null!;
 
     public List<Scholar> Scholars { get; set; } = [];
+
+    public List<Manuscript> Manuscripts { get; set; } = [];
 }

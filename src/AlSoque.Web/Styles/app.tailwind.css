@@ -40,7 +40,7 @@
     font-size: 17px;
     line-height: 1.9;
   }
-  h1, h2, h3, h4 { @apply font-kufi text-brand-dark; line-height: 1.4; font-weight: 600; }
+  h1, h2, h3, h4 { @apply font-kufi text-brand-dark; line-height: 1.4; font-weight: 600; outline: none; }
   a { @apply text-brand-light transition-colors; }
   a:hover { @apply text-gold-deep; }
   ::selection { background: var(--color-gold-soft); color: var(--color-brand-dark); }
@@ -50,6 +50,8 @@
 @layer components {
 
   /* تخطيط */
+  .page-shell     { @apply flex min-h-screen flex-col; }
+  .page-shell > main { @apply flex-1; }
   .container-page { @apply mx-auto w-full max-w-6xl px-4 md:px-6; }
   .stack { @apply flex flex-col gap-6; }
 
@@ -80,6 +82,7 @@
   .section-card { border-radius: var(--radius-card); @apply border border-line bg-surface p-6 md:p-7; }
   .section-head { @apply flex items-center gap-3 mb-5 border-b border-line pb-3; }
   .section-title{ @apply font-kufi text-xl md:text-2xl text-brand-dark m-0; }
+  .subhead      { @apply font-kufi text-brand-light text-lg mt-6 mb-2 pr-3 border-r-4 border-gold-soft; }
 
   /* بطاقة عالم */
   .scholar-card       { border-radius: var(--radius-card); @apply border border-line bg-surface p-5 flex flex-col gap-2 transition hover:-translate-y-0.5; }
@@ -113,6 +116,13 @@
   .field-textarea { @apply min-h-32 resize-y; }
   .field-error  { @apply text-sm text-red-700; }
   .form-card    { border-radius: var(--radius-card); @apply border border-line bg-surface p-6 md:p-7 max-w-2xl mx-auto; }
+
+  /* معرض المخطوطات والوثائق */
+  .gallery      { @apply grid gap-5 sm:grid-cols-2 lg:grid-cols-3; }
+  .ijaza-card   { border-radius: var(--radius-card); @apply border border-line bg-surface p-6 flex flex-col gap-2 transition hover:-translate-y-0.5; }
+  .ijaza-card:hover { box-shadow: 0 24px 46px -34px rgba(18,62,74,.5); }
+  .ijaza-title  { @apply font-kufi text-brand-dark text-lg m-0; }
+  .ijaza-meta   { @apply text-sm text-ink-soft flex flex-col gap-1 mt-2; }
 
   /* الجداول (الإدارة) */
   .table-wrap   { border-radius: var(--radius-card); @apply border border-line bg-surface overflow-x-auto p-0; }

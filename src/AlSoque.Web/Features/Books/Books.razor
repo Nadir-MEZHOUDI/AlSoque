@@ -1,0 +1,76 @@
+@page "/books"
+@using AlSoque.Web.Features.Books
+@inject BooksService BooksService
+
+<PageTitle>الكتب — السوق</PageTitle>
+
+<section class="page-hero">
+    <h1>كتب علماء السوق</h1>
+    <p>الكتب المؤلَّفة من علماء بلدة السوق — مطبوعة، مخطوطة، أو مفقودة.</p>
+</section>
+
+@if (books is null)
+{
+    <p class="text-ink-soft">جارٍ التحميل...</p>
+}
+else if (books.Count == 0)
+{
+    <p class="text-ink-soft">لا توجد كتب مسجَّلة حتى الآن.</p>
+}
+else
+{
+    <div class="table-wrap">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>العنوان</th>
+                    <th>المؤلِّف</th>
+                    <th>الحالة</th>
+                    <th>سنة النشر</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var book in books)
+                {
+                    <tr>
+                        <td>
+                            <strong>@book.Title</strong>
+                            @if (!string.IsNullOrWhiteSpace(book.Description))
+                            {
+                                <p class="text-sm text-ink-soft mt-1">@book.Description</p>
+                            }
+                        </td>
+                        <td><a class="scholar-link" href="@($"/scholars/{book.Scholar.Slug}")">@book.Scholar.FullName</a></td>
+                        <td><span class="@StatusBadgeClass(book.Status)">@StatusLabel(book.Status)</span></td>
+                        <td>@(book.PublicationYear is null ? "—" : $"{book.PublicationYear} هـ")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@code {
+    private List<AlSoque.Data.Entities.Book>? books;
+
+    protected override async Task OnInitializedAsync()
+    {
+        books = await BooksService.GetAllAsync();
+    }
+
+    private static string StatusLabel(AlSoque.Data.Entities.BookStatus status) => status switch
+    {
+        AlSoque.Data.Entities.BookStatus.Printed => "مطبوع",
+        AlSoque.Data.Entities.BookStatus.Manuscript => "مخطوط",
+        AlSoque.Data.Entities.BookStatus.Lost => "مفقود",
+        _ => "—",
+    };
+
+    private static string StatusBadgeClass(AlSoque.Data.Entities.BookStatus status) => status switch
+    {
+        AlSoque.Data.Entities.BookStatus.Printed => "badge badge-ok",
+        AlSoque.Data.Entities.BookStatus.Manuscript => "badge badge-pending",
+        AlSoque.Data.Entities.BookStatus.Lost => "badge badge-rejected",
+        _ => "badge",
+    };
+}

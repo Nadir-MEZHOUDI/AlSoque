@@ -32,6 +32,7 @@ public static class IdentitySeeder
                 UserName = adminEmail,
                 Email = adminEmail,
                 DisplayName = "مسؤول الموقع",
+                FullName = "مسؤول الموقع",
                 EmailConfirmed = true,
             };
             var result = await userManager.CreateAsync(admin, adminPassword);

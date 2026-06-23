@@ -45,6 +45,10 @@ public class Scholar : BaseEntity
     /// <summary>روابط يكون فيها هذا العالم شيخًا</summary>
     public List<ScholarRelation> StudentLinks { get; set; } = [];
 
+    public List<Book> Books { get; set; } = [];
+
+    public List<Manuscript> Manuscripts { get; set; } = [];
+
     public int? AlMawlidGregorian => AlMawlid.ToGregorian();
     public int? AlWufatGregorian => AlWufat.ToGregorian();
 

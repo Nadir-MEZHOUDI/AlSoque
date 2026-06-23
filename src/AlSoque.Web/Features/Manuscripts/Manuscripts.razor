@@ -1,0 +1,67 @@
+@page "/manuscripts"
+@using AlSoque.Web.Features.Manuscripts
+@inject ManuscriptsService ManuscriptsService
+
+<PageTitle>المخطوطات والوثائق — السوق</PageTitle>
+
+<section class="page-hero">
+    <h1>مخطوطات ووثائق السوق</h1>
+    <p>مخطوطات وإجازات ووثائق تاريخية من تراث بلدة السوق العلمي.</p>
+</section>
+
+@if (manuscripts is null)
+{
+    <p class="text-ink-soft">جارٍ التحميل...</p>
+}
+else if (manuscripts.Count == 0)
+{
+    <p class="text-ink-soft">لا توجد مخطوطات أو وثائق مسجَّلة حتى الآن.</p>
+}
+else
+{
+    <div class="gallery">
+        @foreach (var manuscript in manuscripts)
+        {
+            <div class="ijaza-card">
+                <span class="badge badge-ok">@CategoryLabel(manuscript.Category)</span>
+                <h3 class="ijaza-title">@manuscript.Title</h3>
+                @if (!string.IsNullOrWhiteSpace(manuscript.Description))
+                {
+                    <p class="text-sm text-ink-soft">@manuscript.Description</p>
+                }
+                <div class="ijaza-meta">
+                    @if (manuscript.Scholar is not null)
+                    {
+                        <div>عن: <a class="scholar-link" href="@($"/scholars/{manuscript.Scholar.Slug}")">@manuscript.Scholar.FullName</a></div>
+                    }
+                    @if (manuscript.Family is not null)
+                    {
+                        <div>الأسرة: <span class="family-badge">@manuscript.Family.Name</span></div>
+                    }
+                    @if (manuscript.EstimatedYear is not null)
+                    {
+                        <div>تاريخ تقديري: @manuscript.EstimatedYear هـ</div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private List<AlSoque.Data.Entities.Manuscript>? manuscripts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        manuscripts = await ManuscriptsService.GetAllAsync();
+    }
+
+    private static string CategoryLabel(AlSoque.Data.Entities.ManuscriptCategory category) => category switch
+    {
+        AlSoque.Data.Entities.ManuscriptCategory.Manuscript => "مخطوطة",
+        AlSoque.Data.Entities.ManuscriptCategory.Document => "وثيقة",
+        AlSoque.Data.Entities.ManuscriptCategory.Ijaza => "إجازة",
+        AlSoque.Data.Entities.ManuscriptCategory.Photo => "صورة",
+        _ => "—",
+    };
+}

@@ -1,0 +1,134 @@
+@page "/admin/contributions"
+@attribute [Authorize(Roles = AppRoles.Admin)]
+@using System.Security.Claims
+@using System.Text.Json
+@using AlSoque.Data.Entities
+@using AlSoque.Web.Features.Admin.Contributions
+@using AlSoque.Web.Shared.Contributions
+@inject AdminContributionsService AdminService
+
+<PageTitle>مراجعة المساهمات — الإدارة</PageTitle>
+
+<section class="page-hero">
+    <h1>مراجعة المساهمات</h1>
+    <p>المساهمات المعلَّقة من المستخدمين — قبول يُطبِّقها على البيانات الفعلية، رفض يتطلب ملاحظة.</p>
+</section>
+
+@if (pending is null)
+{
+    <p class="text-ink-soft">جارٍ التحميل...</p>
+}
+else if (pending.Count == 0)
+{
+    <p class="text-ink-soft">لا توجد مساهمات معلَّقة حاليًا.</p>
+}
+else
+{
+    <div class="stack">
+        @foreach (var contribution in pending)
+        {
+            var payload = Deserialize(contribution.PayloadJson);
+            <div class="section-card">
+                <div class="section-head flex justify-between items-center">
+                    <h2 class="section-title">@TypeLabel(contribution.Type)</h2>
+                    <span class="badge badge-pending">معلَّقة</span>
+                </div>
+                <p class="text-sm text-ink-soft mb-3">
+                    مقدِّم المساهمة: @contribution.SubmittedByUser.DisplayName (@contribution.SubmittedByUser.Email)
+                    @if (contribution.TargetScholar is not null)
+                    {
+                        <text> — تصحيح على: <a class="scholar-link" href="@($"/scholars/{contribution.TargetScholar.Slug}")">@contribution.TargetScholar.FullName</a></text>
+                    }
+                </p>
+
+                <div class="table-wrap mb-4">
+                    <table class="data-table">
+                        <tbody>
+                            <tr><th>الاسم</th><td>@payload.Name</td></tr>
+                            <tr><th>الكنية / اللقب / النسبة</th><td>@payload.AlKunyah — @payload.AlLaqab — @payload.AlNisbah</td></tr>
+                            <tr><th>الميلاد / الوفاة (هـ)</th><td>@payload.AlMawlid — @payload.AlWufat</td></tr>
+                            <tr><th>المذهب / العقيدة</th><td>@payload.AlMadhab — @payload.AlAkidah</td></tr>
+                            <tr><th>السيرة</th><td>@payload.Biography</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="flex gap-3 items-end">
+                    <button class="btn btn-primary" @onclick="() => ApproveAsync(contribution.Id)">قبول</button>
+                    <div class="field m-0 flex-1">
+                        <input class="field-input" placeholder="ملاحظة الرفض (اختياري)" @bind="rejectNotes[contribution.Id]" />
+                    </div>
+                    <button class="btn btn-outline" @onclick="() => RejectAsync(contribution.Id)">رفض</button>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private List<Contribution>? pending;
+    private readonly Dictionary<int, string> rejectNotes = new();
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationStateTask { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAsync();
+    }
+
+    private async Task LoadAsync()
+    {
+        pending = await AdminService.GetByStatusAsync(ContributionStatus.Pending);
+        foreach (var contribution in pending)
+        {
+            rejectNotes.TryAdd(contribution.Id, string.Empty);
+        }
+    }
+
+    private static ScholarContributionPayload Deserialize(string json) =>
+        JsonSerializer.Deserialize<ScholarContributionPayload>(json) ?? new();
+
+    private async Task<string?> GetCurrentUserIdAsync()
+    {
+        if (AuthenticationStateTask is null)
+        {
+            return null;
+        }
+        var state = await AuthenticationStateTask;
+        return state.User.FindFirstValue(ClaimTypes.NameIdentifier);
+    }
+
+    private async Task ApproveAsync(int contributionId)
+    {
+        var userId = await GetCurrentUserIdAsync();
+        if (userId is null)
+        {
+            return;
+        }
+        await AdminService.ApproveAsync(contributionId, userId);
+        await LoadAsync();
+    }
+
+    private async Task RejectAsync(int contributionId)
+    {
+        var userId = await GetCurrentUserIdAsync();
+        if (userId is null)
+        {
+            return;
+        }
+        rejectNotes.TryGetValue(contributionId, out var note);
+        await AdminService.RejectAsync(contributionId, userId, note);
+        rejectNotes.Remove(contributionId);
+        await LoadAsync();
+    }
+
+    private static string TypeLabel(ContributionType type) => type switch
+    {
+        ContributionType.NewScholar => "ترجمة عالم جديد",
+        ContributionType.EditScholar => "تصحيح على ترجمة موجودة",
+        ContributionType.NewBook => "كتاب جديد",
+        ContributionType.NewManuscript => "مخطوطة/وثيقة جديدة",
+        _ => "—",
+    };
+}

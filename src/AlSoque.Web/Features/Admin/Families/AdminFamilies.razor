@@ -1,0 +1,127 @@
+@page "/admin/families"
+@attribute [Authorize(Roles = AppRoles.Admin)]
+@using AlSoque.Data.Entities
+@using AlSoque.Web.Features.Admin.Families
+@using AlSoque.Web.Shared
+@inject AdminFamiliesService FamiliesService
+
+<PageTitle>إدارة الأسر — الإدارة</PageTitle>
+
+<section class="page-hero">
+    <h1>إدارة الأسر</h1>
+</section>
+
+@if (errorMessage is not null)
+{
+    <p class="field-error mb-4">@errorMessage</p>
+}
+
+<div class="form-card mb-8">
+    <h2 class="section-title mb-4">@(editingId is null ? "إضافة أسرة" : "تعديل أسرة")</h2>
+    <div class="field">
+        <label class="field-label">الاسم</label>
+        <input class="field-input" @bind="name" />
+    </div>
+    <div class="field">
+        <label class="field-label">الوصف</label>
+        <textarea class="field-textarea" @bind="description"></textarea>
+    </div>
+    <div class="flex gap-3">
+        <button class="btn btn-primary" @onclick="SaveAsync">@(editingId is null ? "إضافة" : "حفظ التعديل")</button>
+        @if (editingId is not null)
+        {
+            <button class="btn btn-outline" @onclick="CancelEdit">إلغاء</button>
+        }
+    </div>
+</div>
+
+@if (families is null)
+{
+    <p class="text-ink-soft">جارٍ التحميل...</p>
+}
+else
+{
+    <div class="table-wrap">
+        <table class="data-table">
+            <thead><tr><th>الاسم</th><th>الوصف</th><th></th></tr></thead>
+            <tbody>
+                @foreach (var family in families)
+                {
+                    <tr>
+                        <td>@family.Name</td>
+                        <td>@family.Description</td>
+                        <td class="flex gap-2">
+                            <button class="btn btn-outline" @onclick="() => EditFamily(family)">تعديل</button>
+                            <button class="btn btn-outline" @onclick="() => DeleteAsync(family.Id)">حذف</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@code {
+    private List<Family>? families;
+    private int? editingId;
+    private string name = string.Empty;
+    private string? description;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync() => await LoadAsync();
+
+    private async Task LoadAsync() => families = await FamiliesService.GetAllAsync();
+
+    private void EditFamily(Family family)
+    {
+        editingId = family.Id;
+        name = family.Name;
+        description = family.Description;
+    }
+
+    private void CancelEdit()
+    {
+        editingId = null;
+        name = string.Empty;
+        description = null;
+    }
+
+    private async Task SaveAsync()
+    {
+        errorMessage = null;
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            errorMessage = "اسم الأسرة مطلوب.";
+            return;
+        }
+
+        if (editingId is null)
+        {
+            await FamiliesService.AddAsync(new Family { Name = name, Description = description, Slug = SlugHelper.Slugify(name) });
+        }
+        else
+        {
+            var existing = families!.First(f => f.Id == editingId);
+            existing.Name = name;
+            existing.Description = description;
+            await FamiliesService.UpdateAsync(existing);
+        }
+
+        CancelEdit();
+        await LoadAsync();
+    }
+
+    private async Task DeleteAsync(int id)
+    {
+        errorMessage = null;
+        try
+        {
+            await FamiliesService.DeleteAsync(id);
+            await LoadAsync();
+        }
+        catch (InvalidOperationException ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+}

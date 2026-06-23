@@ -1,0 +1,196 @@
+@page "/contribute"
+@attribute [Authorize]
+@using System.Security.Claims
+@using AlSoque.Data.Entities
+@using AlSoque.Web.Features.Contribute
+@using AlSoque.Web.Shared.Contributions
+@inject ContributeService ContributeService
+
+<PageTitle>ساهم بترجمة — السوق</PageTitle>
+
+<section class="page-hero">
+    <h1>ساهم بترجمة أو تصحيح</h1>
+    <p>مساهمتك تدخل مراجعة الإدارة قبل ظهورها للعامة — لا نشر فوري.</p>
+</section>
+
+@if (submitted)
+{
+    <div class="form-card">
+        <p class="badge-ok badge">تم استلام مساهمتك</p>
+        <p class="para mt-3">شكرًا لمساهمتك. ستظهر بعد موافقة الإدارة عليها.</p>
+        <a class="btn btn-outline mt-2" href="/scholars">عودة إلى تصفّح العلماء</a>
+    </div>
+}
+else if (families is null || scholars is null)
+{
+    <p class="text-ink-soft">جارٍ التحميل...</p>
+}
+else
+{
+    <div class="form-card">
+        <div class="field">
+            <label class="field-label">نوع المساهمة</label>
+            <select class="field-select" @bind="mode">
+                <option value="@Mode.NewScholar">ترجمة عالم جديد</option>
+                <option value="@Mode.EditScholar">تصحيح على ترجمة موجودة</option>
+            </select>
+        </div>
+
+        @if (mode == Mode.EditScholar)
+        {
+            <div class="field">
+                <label class="field-label">العالم المراد تصحيح ترجمته</label>
+                <select class="field-select" @bind="targetScholarId" @bind:after="OnTargetScholarChanged">
+                    <option value="">اختر عالمًا...</option>
+                    @foreach (var scholar in scholars)
+                    {
+                        <option value="@scholar.Id">@scholar.FullName</option>
+                    }
+                </select>
+            </div>
+        }
+
+        <EditForm Model="input" OnValidSubmit="SubmitAsync">
+            <DataAnnotationsValidator />
+            <ValidationSummary class="field-error" />
+
+            <div class="grid sm:grid-cols-2 gap-4">
+                <div class="field">
+                    <label class="field-label">الاسم (للعرض والبحث)</label>
+                    <InputText class="field-input" @bind-Value="input.Name" />
+                </div>
+                <div class="field">
+                    <label class="field-label">النسبة</label>
+                    <InputText class="field-input" @bind-Value="input.AlNisbah" />
+                </div>
+                <div class="field">
+                    <label class="field-label">الكنية</label>
+                    <InputText class="field-input" @bind-Value="input.AlKunyah" />
+                </div>
+                <div class="field">
+                    <label class="field-label">اللقب</label>
+                    <InputText class="field-input" @bind-Value="input.AlLaqab" />
+                </div>
+                <div class="field">
+                    <label class="field-label">الاسم الشخصي</label>
+                    <InputText class="field-input" @bind-Value="input.AlIsm" />
+                </div>
+                <div class="field">
+                    <label class="field-label">النسب (الأب)</label>
+                    <InputText class="field-input" @bind-Value="input.AlNasab" />
+                </div>
+                <div class="field">
+                    <label class="field-label">المذهب الفقهي</label>
+                    <InputText class="field-input" @bind-Value="input.AlMadhab" />
+                </div>
+                <div class="field">
+                    <label class="field-label">العقيدة</label>
+                    <InputText class="field-input" @bind-Value="input.AlAkidah" />
+                </div>
+                <div class="field">
+                    <label class="field-label">سنة الميلاد (هـ)</label>
+                    <InputNumber class="field-input" @bind-Value="input.AlMawlid" />
+                </div>
+                <div class="field">
+                    <label class="field-label">سنة الوفاة (هـ)</label>
+                    <InputNumber class="field-input" @bind-Value="input.AlWufat" />
+                </div>
+                <div class="field">
+                    <label class="field-label">مكان الولادة</label>
+                    <InputText class="field-input" @bind-Value="input.WolidaBi" />
+                </div>
+                <div class="field">
+                    <label class="field-label">مكان الوفاة</label>
+                    <InputText class="field-input" @bind-Value="input.TowofiyaBi" />
+                </div>
+                <div class="field sm:col-span-2">
+                    <label class="field-label">الأسرة</label>
+                    <select class="field-select" @bind="input.FamilyId">
+                        <option value="">غير معروفة</option>
+                        @foreach (var family in families)
+                        {
+                            <option value="@family.Id">@family.Name</option>
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <div class="field">
+                <label class="field-label">السيرة</label>
+                <InputTextArea class="field-textarea" @bind-Value="input.Biography" />
+            </div>
+
+            <button type="submit" class="btn btn-primary">إرسال المساهمة</button>
+        </EditForm>
+    </div>
+}
+
+@code {
+    private enum Mode { NewScholar, EditScholar }
+
+    private List<Family>? families;
+    private List<Scholar>? scholars;
+    private Mode mode = Mode.NewScholar;
+    private int? targetScholarId;
+    private ScholarContributionPayload input = new();
+    private bool submitted;
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationStateTask { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        families = await ContributeService.GetFamiliesAsync();
+        scholars = await ContributeService.GetScholarsAsync();
+    }
+
+    private void OnTargetScholarChanged()
+    {
+        var scholar = scholars?.FirstOrDefault(s => s.Id == targetScholarId);
+        if (scholar is null)
+        {
+            input = new ScholarContributionPayload();
+            return;
+        }
+
+        input = new ScholarContributionPayload
+        {
+            Name = scholar.Name,
+            AlKunyah = scholar.AlKunyah,
+            AlLaqab = scholar.AlLaqab,
+            AlIsm = scholar.AlIsm,
+            AlNisbah = scholar.AlNisbah,
+            AlAb = scholar.AlAb,
+            AlNasab = scholar.AlNasab,
+            AlMadhab = scholar.AlMadhab,
+            AlAkidah = scholar.AlAkidah,
+            AlMawlid = scholar.AlMawlid,
+            AlWufat = scholar.AlWufat,
+            WolidaBi = scholar.WolidaBi,
+            TowofiyaBi = scholar.TowofiyaBi,
+            Biography = scholar.Biography,
+            FamilyId = scholar.FamilyId,
+        };
+    }
+
+    private async Task SubmitAsync()
+    {
+        if (AuthenticationStateTask is null)
+        {
+            return;
+        }
+
+        var authState = await AuthenticationStateTask;
+        var userId = authState.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId))
+        {
+            return;
+        }
+
+        var type = mode == Mode.NewScholar ? ContributionType.NewScholar : ContributionType.EditScholar;
+        var targetId = mode == Mode.EditScholar ? targetScholarId : null;
+
+        await ContributeService.SubmitAsync(type, targetId, input, userId);
+        submitted = true;
+    }
+}

@@ -1,0 +1,64 @@
+@page "/admin/books"
+@attribute [Authorize(Roles = AppRoles.Admin)]
+@using AlSoque.Data.Entities
+@using AlSoque.Web.Features.Admin.Books
+@inject AdminBooksService BooksService
+
+<PageTitle>إدارة الكتب — الإدارة</PageTitle>
+
+<section class="page-hero">
+    <h1>إدارة الكتب</h1>
+</section>
+
+<div class="mb-6">
+    <a class="btn btn-primary" href="/admin/books/0/edit">إضافة كتاب جديد</a>
+</div>
+
+@if (books is null)
+{
+    <p class="text-ink-soft">جارٍ التحميل...</p>
+}
+else
+{
+    <div class="table-wrap">
+        <table class="data-table">
+            <thead><tr><th>العنوان</th><th>المؤلِّف</th><th>الحالة</th><th></th></tr></thead>
+            <tbody>
+                @foreach (var book in books)
+                {
+                    <tr>
+                        <td>@book.Title</td>
+                        <td>@book.Scholar.FullName</td>
+                        <td>@StatusLabel(book.Status)</td>
+                        <td class="flex gap-2">
+                            <a class="btn btn-outline" href="@($"/admin/books/{book.Id}/edit")">تعديل</a>
+                            <button class="btn btn-outline" @onclick="() => DeleteAsync(book.Id)">حذف</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@code {
+    private List<Book>? books;
+
+    protected override async Task OnInitializedAsync() => await LoadAsync();
+
+    private async Task LoadAsync() => books = await BooksService.GetAllAsync();
+
+    private async Task DeleteAsync(int id)
+    {
+        await BooksService.DeleteAsync(id);
+        await LoadAsync();
+    }
+
+    private static string StatusLabel(BookStatus status) => status switch
+    {
+        BookStatus.Printed => "مطبوع",
+        BookStatus.Manuscript => "مخطوط",
+        BookStatus.Lost => "مفقود",
+        _ => "—",
+    };
+}

@@ -1,0 +1,18 @@
+@using AlSoque.Data.Entities
+
+<a href="@($"/scholars/{Scholar.Slug}")" class="scholar-card">
+    <span class="name">@Scholar.FullName</span>
+    @if (Scholar.AlMawlid is not null || Scholar.AlWufat is not null)
+    {
+        <span class="meta">@Scholar.AlMawlid هـ — @Scholar.AlWufat هـ</span>
+    }
+    @if (Scholar.Family is not null)
+    {
+        <span class="family-badge">@Scholar.Family.Name</span>
+    }
+</a>
+
+@code {
+    [Parameter, EditorRequired]
+    public Scholar Scholar { get; set; } = null!;
+}

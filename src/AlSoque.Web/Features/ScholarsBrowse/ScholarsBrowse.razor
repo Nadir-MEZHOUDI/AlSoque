@@ -1,0 +1,101 @@
+@page "/scholars"
+@using AlSoque.Web.Features.ScholarsBrowse
+@inject ScholarsBrowseService BrowseService
+
+<PageTitle>العلماء — السوق</PageTitle>
+
+<section class="page-hero">
+    <h1>علماء السوق</h1>
+    <p>تصفّح تراجم علماء بلدة السوق من أسرها المتعددة، عبر العصور والتخصصات.</p>
+</section>
+
+<div class="section-card mb-8">
+    <div class="grid sm:grid-cols-4 gap-4">
+        <div class="field m-0">
+            <label class="field-label" for="search">بحث بالاسم</label>
+            <input id="search" class="field-input" @bind="searchText" @bind:event="oninput" @bind:after="OnFilterChangedAsync" placeholder="اسم العالم أو النسبة..." />
+        </div>
+        <div class="field m-0">
+            <label class="field-label" for="family">الأسرة</label>
+            <select id="family" class="field-select" @bind="familyId" @bind:after="OnFilterChangedAsync">
+                <option value="">الكل</option>
+                @if (result is not null)
+                {
+                    @foreach (var family in result.Families)
+                    {
+                        <option value="@family.Id">@family.Name</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="field m-0">
+            <label class="field-label" for="specialization">التخصص</label>
+            <select id="specialization" class="field-select" @bind="specializationId" @bind:after="OnFilterChangedAsync">
+                <option value="">الكل</option>
+                @if (result is not null)
+                {
+                    @foreach (var specialization in result.Specializations)
+                    {
+                        <option value="@specialization.Id">@specialization.Name</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="field m-0">
+            <label class="field-label" for="century">القرن الهجري</label>
+            <select id="century" class="field-select" @bind="century" @bind:after="OnFilterChangedAsync">
+                <option value="">الكل</option>
+                @for (var c = 1; c <= 15; c++)
+                {
+                    <option value="@c">القرن @c هـ</option>
+                }
+            </select>
+        </div>
+    </div>
+</div>
+
+@if (result is null)
+{
+    <p class="text-ink-soft">جارٍ التحميل...</p>
+}
+else if (result.Scholars.Count == 0)
+{
+    <p class="text-ink-soft">لا يوجد علماء مطابقون لهذا البحث.</p>
+}
+else
+{
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        @foreach (var scholar in result.Scholars)
+        {
+            <ScholarCard Scholar="scholar" />
+        }
+    </div>
+}
+
+@code {
+    private ScholarsBrowseResult? result;
+
+    private string? searchText;
+    private int? familyId;
+    private int? specializationId;
+    private int? century;
+
+    [SupplyParameterFromQuery]
+    private int? FamilyId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        familyId = FamilyId;
+        await LoadAsync();
+    }
+
+    private async Task LoadAsync()
+    {
+        result = await BrowseService.GetAsync(new ScholarsBrowseFilter(searchText, familyId, specializationId, century));
+    }
+
+    private async Task OnFilterChangedAsync()
+    {
+        await LoadAsync();
+    }
+}

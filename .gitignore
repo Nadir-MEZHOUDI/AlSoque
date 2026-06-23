@@ -37,6 +37,9 @@ node_modules/
 wwwroot/lib/
 wwwroot/dist/
 
+## Tailwind v4 build artifact — regenerated from Styles/app.tailwind.css
+src/AlSoque.Web/wwwroot/app.css
+
 ## OS files
 Thumbs.db
 .DS_Store

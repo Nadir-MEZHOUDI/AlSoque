@@ -1,0 +1,100 @@
+@page "/admin/users"
+@attribute [Authorize(Roles = AppRoles.Admin)]
+@using System.Security.Claims
+@using AlSoque.Web.Features.Admin.Users
+@inject AdminUsersService UsersService
+
+<PageTitle>إدارة المستخدمين — الإدارة</PageTitle>
+
+<section class="page-hero">
+    <h1>إدارة المستخدمين والأدوار</h1>
+</section>
+
+@if (users is null)
+{
+    <p class="text-ink-soft">جارٍ التحميل...</p>
+}
+else
+{
+    <div class="table-wrap">
+        <table class="data-table">
+            <thead><tr><th>الاسم</th><th>البريد الإلكتروني</th><th>الدولة</th><th>المدينة</th><th>الدور</th><th>الحالة</th><th></th></tr></thead>
+            <tbody>
+                @foreach (var user in users)
+                {
+                    <tr>
+                        <td>@user.FullName</td>
+                        <td>@user.Email</td>
+                        <td>@user.Country</td>
+                        <td>@user.City</td>
+                        <td>
+                            <span class="@(user.IsAdmin ? "badge badge-ok" : "badge")">@(user.IsAdmin ? "مسؤول" : "عضو")</span>
+                        </td>
+                        <td>
+                            <span class="@(user.IsBanned ? "badge badge-rejected" : "badge badge-ok")">@(user.IsBanned ? "محظور" : "نشط")</span>
+                        </td>
+                        <td class="flex gap-2">
+                            @if (user.Id == currentUserId)
+                            {
+                                <span class="text-sm text-ink-faint">(حسابك)</span>
+                            }
+                            else
+                            {
+                                @if (user.IsAdmin)
+                                {
+                                    <button class="btn btn-outline" @onclick="() => SetAdminAsync(user.Id, false)">إزالة صلاحية المسؤول</button>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-outline" @onclick="() => SetAdminAsync(user.Id, true)">ترقية إلى مسؤول</button>
+                                }
+
+                                @if (user.IsBanned)
+                                {
+                                    <button class="btn btn-outline" @onclick="() => SetBannedAsync(user.Id, false)">تفعيل</button>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-outline" @onclick="() => SetBannedAsync(user.Id, true)">حظر</button>
+                                }
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@code {
+    private List<AdminUserRow>? users;
+    private string? currentUserId;
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationStateTask { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (AuthenticationStateTask is not null)
+        {
+            var state = await AuthenticationStateTask;
+            currentUserId = state.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        }
+
+        await LoadAsync();
+    }
+
+    private async Task LoadAsync() => users = await UsersService.GetAllAsync();
+
+    private async Task SetAdminAsync(string userId, bool isAdmin)
+    {
+        await UsersService.SetAdminAsync(userId, isAdmin);
+        await LoadAsync();
+    }
+
+    private async Task SetBannedAsync(string userId, bool banned)
+    {
+        await UsersService.SetBannedAsync(userId, banned);
+        await LoadAsync();
+    }
+}

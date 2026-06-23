@@ -1,0 +1,141 @@
+@page "/scholars/{Slug}"
+@using AlSoque.Web.Features.ScholarProfile
+@inject ScholarProfileService ProfileService
+
+<PageTitle>@(scholar?.FullName ?? "عالم")</PageTitle>
+
+@if (notFound)
+{
+    <section class="page-hero">
+        <h1>لم يُعثر على هذا العالم</h1>
+        <p><a href="/scholars">عودة إلى تصفّح العلماء</a></p>
+    </section>
+}
+else if (scholar is null)
+{
+    <p class="text-ink-soft">جارٍ التحميل...</p>
+}
+else
+{
+    <section class="page-hero">
+        <h1>@scholar.FullName</h1>
+        @if (scholar.Family is not null)
+        {
+            <p><a href="@($"/scholars?familyId={scholar.Family.Id}")" class="family-badge">@scholar.Family.Name</a></p>
+        }
+    </section>
+
+    <div class="grid lg:grid-cols-[2fr_1fr] gap-6">
+        <div class="stack">
+            @if (!string.IsNullOrWhiteSpace(scholar.Biography))
+            {
+                <div class="section-card">
+                    <div class="section-head"><h2 class="section-title">السيرة</h2></div>
+                    <p class="para">@scholar.Biography</p>
+                </div>
+            }
+
+            @if (scholar.TeacherLinks.Count > 0 || scholar.StudentLinks.Count > 0)
+            {
+                <div class="section-card">
+                    <div class="section-head"><h2 class="section-title">السند العلمي</h2></div>
+                    @if (scholar.TeacherLinks.Count > 0)
+                    {
+                        <h3 class="subhead">شيوخه</h3>
+                        <ul>
+                            @foreach (var link in scholar.TeacherLinks)
+                            {
+                                <li><a class="scholar-link" href="@($"/scholars/{link.Teacher.Slug}")">@link.Teacher.FullName</a></li>
+                            }
+                        </ul>
+                    }
+                    @if (scholar.StudentLinks.Count > 0)
+                    {
+                        <h3 class="subhead">تلاميذه</h3>
+                        <ul>
+                            @foreach (var link in scholar.StudentLinks)
+                            {
+                                <li><a class="scholar-link" href="@($"/scholars/{link.Student.Slug}")">@link.Student.FullName</a></li>
+                            }
+                        </ul>
+                    }
+                </div>
+            }
+
+            @if (scholar.Books.Count > 0 || scholar.Manuscripts.Count > 0)
+            {
+                <div class="section-card">
+                    <div class="section-head"><h2 class="section-title">الكتب والمخطوطات</h2></div>
+                    @if (scholar.Books.Count > 0)
+                    {
+                        <h3 class="subhead">كتبه</h3>
+                        <ul>
+                            @foreach (var book in scholar.Books)
+                            {
+                                <li><a class="book-link" href="/books">@book.Title</a></li>
+                            }
+                        </ul>
+                    }
+                    @if (scholar.Manuscripts.Count > 0)
+                    {
+                        <h3 class="subhead">مخطوطاته ووثائقه</h3>
+                        <ul>
+                            @foreach (var manuscript in scholar.Manuscripts)
+                            {
+                                <li><a class="book-link" href="/manuscripts">@manuscript.Title</a></li>
+                            }
+                        </ul>
+                    }
+                </div>
+            }
+        </div>
+
+        <aside class="section-card">
+            <div class="section-head"><h2 class="section-title">بطاقة العالم</h2></div>
+            <dl class="stack gap-2">
+                @if (scholar.AlMawlid is not null)
+                {
+                    <div><dt class="field-label">الميلاد</dt><dd class="mt-0.5">@scholar.AlMawlid هـ (@scholar.AlMawlidGregorian م) @scholar.WolidaBi</dd></div>
+                }
+                @if (scholar.AlWufat is not null)
+                {
+                    <div><dt class="field-label">الوفاة</dt><dd class="mt-0.5">@scholar.AlWufat هـ (@scholar.AlWufatGregorian م) @scholar.TowofiyaBi</dd></div>
+                }
+                @if (!string.IsNullOrWhiteSpace(scholar.AlMadhab))
+                {
+                    <div><dt class="field-label">المذهب الفقهي</dt><dd class="mt-0.5">@scholar.AlMadhab</dd></div>
+                }
+                @if (!string.IsNullOrWhiteSpace(scholar.AlAkidah))
+                {
+                    <div><dt class="field-label">العقيدة</dt><dd class="mt-0.5">@scholar.AlAkidah</dd></div>
+                }
+                @if (scholar.Specializations.Count > 0)
+                {
+                    <div>
+                        <dt class="field-label">التخصصات</dt>
+                        <dd class="flex flex-wrap gap-2 mt-1">
+                            @foreach (var specialization in scholar.Specializations)
+                            {
+                                <span class="badge badge-ok">@specialization.Name</span>
+                            }
+                        </dd>
+                    </div>
+                }
+            </dl>
+        </aside>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string Slug { get; set; } = string.Empty;
+
+    private AlSoque.Data.Entities.Scholar? scholar;
+    private bool notFound;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        scholar = await ProfileService.GetBySlugAsync(Slug);
+        notFound = scholar is null;
+    }
+}

@@ -1,0 +1,198 @@
+@page "/admin/scholars/{Id:int}/edit"
+@attribute [Authorize(Roles = AppRoles.Admin)]
+@using AlSoque.Data.Entities
+@using AlSoque.Web.Features.Admin.Scholars
+@using AlSoque.Web.Shared
+@inject AdminScholarsService ScholarsService
+@inject NavigationManager NavigationManager
+
+<PageTitle>@(Id == 0 ? "إضافة عالم" : "تعديل عالم") — الإدارة</PageTitle>
+
+<section class="page-hero">
+    <h1>@(Id == 0 ? "إضافة عالم جديد" : "تعديل بيانات عالم")</h1>
+</section>
+
+@if (scholar is null || families is null || specializations is null)
+{
+    <p class="text-ink-soft">جارٍ التحميل...</p>
+}
+else
+{
+    @if (errorMessage is not null)
+    {
+        <p class="field-error mb-4">@errorMessage</p>
+    }
+
+    <div class="form-card">
+        <div class="grid sm:grid-cols-2 gap-4">
+            <div class="field">
+                <label class="field-label">الاسم (للعرض والبحث)</label>
+                <input class="field-input" @bind="scholar.Name" />
+            </div>
+            <div class="field">
+                <label class="field-label">المعرّف في الرابط (Slug)</label>
+                <div class="flex gap-2">
+                    <input class="field-input" @bind="scholar.Slug" />
+                    <button type="button" class="btn btn-outline" @onclick="GenerateSlug">توليد</button>
+                </div>
+            </div>
+            <div class="field">
+                <label class="field-label">الكنية</label>
+                <input class="field-input" @bind="scholar.AlKunyah" />
+            </div>
+            <div class="field">
+                <label class="field-label">اللقب</label>
+                <input class="field-input" @bind="scholar.AlLaqab" />
+            </div>
+            <div class="field">
+                <label class="field-label">الاسم الشخصي</label>
+                <input class="field-input" @bind="scholar.AlIsm" />
+            </div>
+            <div class="field">
+                <label class="field-label">النسبة</label>
+                <input class="field-input" @bind="scholar.AlNisbah" />
+            </div>
+            <div class="field">
+                <label class="field-label">النسب (الأب)</label>
+                <input class="field-input" @bind="scholar.AlNasab" />
+            </div>
+            <div class="field">
+                <label class="field-label">المذهب الفقهي</label>
+                <input class="field-input" @bind="scholar.AlMadhab" />
+            </div>
+            <div class="field">
+                <label class="field-label">العقيدة</label>
+                <input class="field-input" @bind="scholar.AlAkidah" />
+            </div>
+            <div class="field">
+                <label class="field-label">الأسرة</label>
+                <select class="field-select" @bind="scholar.FamilyId">
+                    <option value="">غير معروفة</option>
+                    @foreach (var family in families)
+                    {
+                        <option value="@family.Id">@family.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="field">
+                <label class="field-label">سنة الميلاد (هـ)</label>
+                <input type="number" class="field-input" @bind="scholar.AlMawlid" />
+            </div>
+            <div class="field">
+                <label class="field-label">سنة الوفاة (هـ)</label>
+                <input type="number" class="field-input" @bind="scholar.AlWufat" />
+            </div>
+            <div class="field">
+                <label class="field-label">مكان الولادة</label>
+                <input class="field-input" @bind="scholar.WolidaBi" />
+            </div>
+            <div class="field">
+                <label class="field-label">مكان الوفاة</label>
+                <input class="field-input" @bind="scholar.TowofiyaBi" />
+            </div>
+        </div>
+
+        <div class="field">
+            <label class="field-label">السيرة</label>
+            <textarea class="field-textarea" @bind="scholar.Biography"></textarea>
+        </div>
+
+        <div class="field">
+            <label class="field-label">التخصصات</label>
+            <div class="flex flex-wrap gap-3">
+                @foreach (var specialization in specializations)
+                {
+                    <label class="flex items-center gap-2 text-sm">
+                        <input type="checkbox" checked="@selectedSpecializationIds.Contains(specialization.Id)"
+                               @onchange="@(e => ToggleSpecialization(specialization.Id, (bool)e.Value!))" />
+                        @specialization.Name
+                    </label>
+                }
+            </div>
+        </div>
+
+        <div class="flex gap-3 mt-4">
+            <button class="btn btn-primary" @onclick="SaveAsync">حفظ</button>
+            <a class="btn btn-outline" href="/admin/scholars">إلغاء</a>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private Scholar? scholar;
+    private List<Family>? families;
+    private List<Specialization>? specializations;
+    private HashSet<int> selectedSpecializationIds = [];
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        families = await ScholarsService.GetFamiliesAsync();
+        specializations = await ScholarsService.GetSpecializationsAsync();
+
+        if (Id == 0)
+        {
+            scholar = new Scholar();
+        }
+        else
+        {
+            scholar = await ScholarsService.GetByIdAsync(Id);
+            if (scholar is not null)
+            {
+                selectedSpecializationIds = scholar.Specializations.Select(s => s.Id).ToHashSet();
+            }
+        }
+    }
+
+    private void ToggleSpecialization(int specializationId, bool isChecked)
+    {
+        if (isChecked)
+        {
+            selectedSpecializationIds.Add(specializationId);
+        }
+        else
+        {
+            selectedSpecializationIds.Remove(specializationId);
+        }
+    }
+
+    private void GenerateSlug()
+    {
+        if (scholar is not null)
+        {
+            scholar.Slug = SlugHelper.Slugify(scholar.Name);
+        }
+    }
+
+    private async Task SaveAsync()
+    {
+        errorMessage = null;
+        if (scholar is null)
+        {
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(scholar.Name))
+        {
+            errorMessage = "اسم الشهرة مطلوب.";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(scholar.Slug))
+        {
+            scholar.Slug = SlugHelper.Slugify(scholar.Name);
+        }
+
+        if (await ScholarsService.IsSlugTakenAsync(scholar.Slug, Id == 0 ? null : Id))
+        {
+            errorMessage = "هذا المعرّف (Slug) مستخدَم بالفعل، اختر معرّفًا آخر.";
+            return;
+        }
+
+        await ScholarsService.SaveAsync(scholar, selectedSpecializationIds.ToList());
+        NavigationManager.NavigateTo("/admin/scholars");
+    }
+}

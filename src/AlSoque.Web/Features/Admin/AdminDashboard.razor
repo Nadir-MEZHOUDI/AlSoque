@@ -1,0 +1,39 @@
+@page "/admin"
+@attribute [Authorize(Roles = AppRoles.Admin)]
+
+<PageTitle>لوحة الإدارة — السوق</PageTitle>
+
+<section class="page-hero">
+    <h1>لوحة الإدارة</h1>
+</section>
+
+<div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+    <a href="/admin/contributions" class="card">
+        <h3 class="font-kufi text-lg text-brand-dark mb-1">مراجعة المساهمات</h3>
+        <p class="text-ink-soft text-sm m-0">قبول أو رفض تراجم/تصحيحات المستخدمين المسجَّلين.</p>
+    </a>
+    <a href="/admin/scholars" class="card">
+        <h3 class="font-kufi text-lg text-brand-dark mb-1">إدارة العلماء</h3>
+        <p class="text-ink-soft text-sm m-0">إضافة وتعديل وحذف تراجم العلماء مباشرةً.</p>
+    </a>
+    <a href="/admin/books" class="card">
+        <h3 class="font-kufi text-lg text-brand-dark mb-1">إدارة الكتب</h3>
+        <p class="text-ink-soft text-sm m-0">إضافة وتعديل وحذف الكتب المؤلَّفة.</p>
+    </a>
+    <a href="/admin/manuscripts" class="card">
+        <h3 class="font-kufi text-lg text-brand-dark mb-1">إدارة المخطوطات</h3>
+        <p class="text-ink-soft text-sm m-0">إضافة وتعديل وحذف المخطوطات والوثائق.</p>
+    </a>
+    <a href="/admin/families" class="card">
+        <h3 class="font-kufi text-lg text-brand-dark mb-1">إدارة الأسر</h3>
+        <p class="text-ink-soft text-sm m-0">إضافة وتعديل وحذف أسر علماء السوق.</p>
+    </a>
+    <a href="/admin/specializations" class="card">
+        <h3 class="font-kufi text-lg text-brand-dark mb-1">إدارة التخصصات</h3>
+        <p class="text-ink-soft text-sm m-0">إضافة وتعديل وحذف التخصصات العلمية.</p>
+    </a>
+    <a href="/admin/users" class="card">
+        <h3 class="font-kufi text-lg text-brand-dark mb-1">إدارة المستخدمين</h3>
+        <p class="text-ink-soft text-sm m-0">ترقية أو إزالة صلاحية المسؤول عن المستخدمين.</p>
+    </a>
+</div>

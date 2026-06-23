@@ -1,0 +1,65 @@
+@page "/admin/manuscripts"
+@attribute [Authorize(Roles = AppRoles.Admin)]
+@using AlSoque.Data.Entities
+@using AlSoque.Web.Features.Admin.Manuscripts
+@inject AdminManuscriptsService ManuscriptsService
+
+<PageTitle>إدارة المخطوطات — الإدارة</PageTitle>
+
+<section class="page-hero">
+    <h1>إدارة المخطوطات والوثائق</h1>
+</section>
+
+<div class="mb-6">
+    <a class="btn btn-primary" href="/admin/manuscripts/0/edit">إضافة مخطوطة/وثيقة جديدة</a>
+</div>
+
+@if (manuscripts is null)
+{
+    <p class="text-ink-soft">جارٍ التحميل...</p>
+}
+else
+{
+    <div class="table-wrap">
+        <table class="data-table">
+            <thead><tr><th>العنوان</th><th>الفئة</th><th>متعلقة بـ</th><th></th></tr></thead>
+            <tbody>
+                @foreach (var manuscript in manuscripts)
+                {
+                    <tr>
+                        <td>@manuscript.Title</td>
+                        <td>@CategoryLabel(manuscript.Category)</td>
+                        <td>@(manuscript.Scholar?.FullName ?? manuscript.Family?.Name ?? "—")</td>
+                        <td class="flex gap-2">
+                            <a class="btn btn-outline" href="@($"/admin/manuscripts/{manuscript.Id}/edit")">تعديل</a>
+                            <button class="btn btn-outline" @onclick="() => DeleteAsync(manuscript.Id)">حذف</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@code {
+    private List<Manuscript>? manuscripts;
+
+    protected override async Task OnInitializedAsync() => await LoadAsync();
+
+    private async Task LoadAsync() => manuscripts = await ManuscriptsService.GetAllAsync();
+
+    private async Task DeleteAsync(int id)
+    {
+        await ManuscriptsService.DeleteAsync(id);
+        await LoadAsync();
+    }
+
+    private static string CategoryLabel(ManuscriptCategory category) => category switch
+    {
+        ManuscriptCategory.Manuscript => "مخطوطة",
+        ManuscriptCategory.Document => "وثيقة",
+        ManuscriptCategory.Ijaza => "إجازة",
+        ManuscriptCategory.Photo => "صورة",
+        _ => "—",
+    };
+}

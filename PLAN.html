@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>خطة مشروع AlSoque.net — تراجم وتاريخ وتراث علماء السوق</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400..700&family=Noto+Kufi+Arabic:wght@400..700&display=swap" />
+<style>
+  :root{
+    --paper:#f7f3ea; --paper-soft:#fdfbf6; --surface:#ffffff;
+    --ink:#1c1a17; --ink-soft:#5b5650; --ink-faint:#948d80;
+    --brand:#1d5a6b; --brand-dark:#123e4a; --brand-light:#2c7a8f;
+    --gold:#b9803f; --gold-soft:#cf9d63; --gold-deep:#96672c; --gold-tint:#f3e6d2;
+    --sage:#dde7e6; --line:#e6dfcd; --radius:16px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:"Noto Naskh Arabic", serif; font-size:17px; line-height:1.9;
+  }
+  h1,h2,h3,h4{ font-family:"Noto Kufi Arabic", sans-serif; color:var(--brand-dark); line-height:1.4; font-weight:700; }
+  a{ color:var(--brand-light); }
+  .wrap{ max-width:920px; margin:0 auto; padding:0 20px 80px; }
+  header.hero{
+    background:var(--brand-dark); color:#f4efe3; text-align:center;
+    padding:56px 20px 44px; margin-bottom:40px;
+  }
+  header.hero .seal{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:64px; height:64px; border-radius:16px; border:2px solid var(--gold-soft);
+    background:radial-gradient(circle at 35% 30%, #fff, var(--gold-tint));
+    color:var(--brand); font-family:"Noto Kufi Arabic", sans-serif; font-weight:700;
+    font-size:28px; margin-bottom:16px;
+  }
+  header.hero h1{ color:#fff; font-size:28px; margin:0 0 8px; }
+  header.hero p{ color:var(--gold-soft); margin:0; font-size:15px; }
+  .status-bar{
+    display:flex; flex-wrap:wrap; gap:10px; justify-content:center;
+    margin-top:24px;
+  }
+  .pill{
+    font-family:"Noto Kufi Arabic", sans-serif; font-size:12px; font-weight:700;
+    padding:6px 14px; border-radius:999px; background:rgba(255,255,255,.08);
+    border:1px solid rgba(207,157,99,.4); color:#f4efe3;
+  }
+  .pill.done{ background:#1d5a6b; border-color:var(--gold-soft); }
+  section.card{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+    padding:28px 30px; margin-bottom:28px;
+  }
+  section.card h2{
+    font-size:21px; margin:0 0 16px; padding-bottom:12px; border-bottom:1px solid var(--line);
+    display:flex; align-items:center; gap:10px;
+  }
+  section.card h2::before{
+    content:""; width:8px; height:8px; border-radius:50%; background:var(--gold);
+    display:inline-block;
+  }
+  p{ text-align:justify; }
+  code{
+    background:var(--gold-tint); color:var(--gold-deep); padding:1px 6px;
+    border-radius:6px; font-size:.92em; direction:ltr; unicode-bidi:isolate;
+  }
+  pre{
+    background:var(--brand-dark); color:#e7e2d4; padding:18px 20px; border-radius:12px;
+    overflow-x:auto; direction:ltr; text-align:left; font-size:13.5px; line-height:1.6;
+  }
+  table{ width:100%; border-collapse:collapse; margin:10px 0; }
+  th,td{ border:1px solid var(--line); padding:10px 12px; text-align:right; vertical-align:top; }
+  th{ background:var(--brand); color:#fdfbf6; font-family:"Noto Kufi Arabic", sans-serif; font-size:14px; }
+  ul,ol{ padding-right:22px; }
+  li{ margin-bottom:8px; }
+  .badge{
+    display:inline-block; font-family:"Noto Kufi Arabic", sans-serif; font-size:11px;
+    font-weight:700; padding:2px 10px; border-radius:999px; margin-right:6px;
+  }
+  .badge-done{ background:#dcefe8; color:#0f6b4a; }
+  .badge-todo{ background:var(--gold-tint); color:var(--gold-deep); }
+  .phase{
+    border:1px solid var(--line); border-radius:12px; padding:16px 18px; margin-bottom:12px;
+    display:flex; gap:14px; align-items:flex-start;
+  }
+  .phase .num{
+    flex-shrink:0; width:34px; height:34px; border-radius:10px; background:var(--sage);
+    color:var(--brand); font-family:"Noto Kufi Arabic", sans-serif; font-weight:700;
+    display:flex; align-items:center; justify-content:center; font-size:14px;
+  }
+  .phase.done .num{ background:var(--brand); color:#fff; }
+  .phase h3{ margin:0 0 4px; font-size:16px; display:flex; align-items:center; gap:8px; }
+  .phase p{ margin:0; color:var(--ink-soft); font-size:15px; }
+  footer{ text-align:center; color:var(--ink-faint); font-size:13px; margin-top:40px; }
+  .note{
+    background:var(--gold-tint); border-right:4px solid var(--gold); border-radius:8px;
+    padding:14px 16px; font-size:15px; color:var(--gold-deep);
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <span class="seal">س</span>
+  <h1>خطة مشروع AlSoque.net</h1>
+  <p>تراجم وتاريخ وتراث علماء السوق — حفظ وعرض، مع إدارة مستخدمين وتسجيل عام</p>
+  <div class="status-bar">
+    <span class="pill done">✓ التأسيس</span>
+    <span class="pill done">✓ الكيانات الأساسية</span>
+    <span class="pill done">✓ Identity + تسجيل عام</span>
+    <span class="pill done">✓ Tailwind v4 + الهوية</span>
+    <span class="pill done">✓ عرض العلماء</span>
+    <span class="pill done">✓ الكتب والمخطوطات</span>
+    <span class="pill done">✓ المساهمات والمراجعة</span>
+    <span class="pill done">✓ لوحة الإدارة الكاملة</span>
+    <span class="pill">النشر</span>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <section class="card">
+    <h2>السياق</h2>
+    <p>
+      <code>D:\Projects\Best 2026\AlSoque</code> كان مجلدًا فاضيًا تمامًا، بعد امتلاك دومين
+      <strong>www.AlSoque.net</strong> حديثًا. الهدف: موقع مستقل لحفظ وعرض تراجم وتاريخ وتراث
+      <strong>علماء بلدة/منطقة «السوق»</strong> (تضم علماء من أسر متعددة، لا أسرة واحدة)، مع
+      <strong>تسجيل عام للمستخدمين</strong> يتيح المساهمة بتراجم أو تصحيحات تدخل مراجعة الإدارة قبل النشر.
+    </p>
+    <p>
+      هذا يخالف صراحةً قرارين سابقين موثَّقين في مشروعي الأخ: <strong>AlMahmoud</strong>
+      (سيرة الشيخ المحمود فقط — بلا تسجيل عام) و<strong>A3lam</strong>
+      (الموسوعة العامة القائمة — القرار السابق كان توجيه كل تراجم السوقيين إليها).
+      <strong>القرار الآن صريح من المستخدم:</strong> AlSoque مشروع ومستودع بيانات مستقل تمامًا،
+      يلغي القرار السابق. لن يُلمَس A3lam أو AlMahmoud في هذا العمل.
+    </p>
+    <div class="note">
+      النطاق الأولي (بالاتفاق): <strong>العلماء + الكتب + المخطوطات/الوثائق التاريخية</strong> فقط.
+      لا مساجد/مدارس/خط زمني للبلدة الآن — تُترك لتوسعة لاحقة حتى لا يتضخم الكيان الأول.
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>القرارات المعمارية</h2>
+    <p>
+      يُحاكى نمط AlMahmoud (الأحدث والأقرب تقنيًا من بين مشروعي الأخ) مع تعديل نقطتين جوهريتين:
+      <strong>تفعيل التسجيل العام</strong>، و<strong>نموذج بيانات متعدد الأسر</strong> (لا أسرة واحدة).
+    </p>
+    <table>
+      <tr><th>الطبقة</th><th>الاختيار</th><th>السبب</th></tr>
+      <tr><td>الإطار</td><td>Blazor Web App — .NET 10، InteractiveServer</td><td>يطابق معيار الشركة ومشروع AlMahmoud</td></tr>
+      <tr><td>DB</td><td>PostgreSQL مباشرة (بلا SQLite متوسطة)</td><td>معيار الشركة العام في CLAUDE.md؛ لا حاجة لتجريد مزوّدين هنا</td></tr>
+      <tr><td>ORM</td><td>EF Core 10+</td><td>معيار الشركة</td></tr>
+      <tr><td>الهوية</td><td>ASP.NET Core Identity، <strong>تسجيل عام مفعّل</strong></td><td>يخالف AlMahmoud عمدًا بطلب المستخدم</td></tr>
+      <tr><td>التصميم</td><td>Tailwind v4 (عبر npx @tailwindcss/cli)</td><td>يطابق نمط AlMahmoud الفعلي على Windows</td></tr>
+      <tr><td>البنية</td><td>Vertical Slice Architecture، خدمات لا مستودعات، لا CQRS</td><td>معيار الشركة العام</td></tr>
+    </table>
+
+    <h3 style="margin-top:24px;">بنية الحل</h3>
+<pre>AlSoque.sln
+src/
+├── AlSoque.Data/          # الكيانات + AppDbContext + Identity stores + الهجرات
+└── AlSoque.Web/
+    ├── Features/          # Vertical Slices لكل ميزة
+    │   ├── Home/
+    │   ├── ScholarsBrowse/   # تصفح + بحث + تصفية (أسرة/قرن/تخصص)
+    │   ├── ScholarProfile/   # /scholars/{slug}
+    │   ├── Books/
+    │   ├── Manuscripts/
+    │   ├── Contribute/       # نموذج مساهمة — يتطلب تسجيل دخول
+    │   ├── Account/          # تسجيل/دخول/ملف شخصي (Identity مخصَّص RTL)
+    │   └── Admin/            # مراجعة المساهمات، CRUD يدوي، إدارة المستخدمين/الأدوار
+    ├── Shared/            # Layout RTL + مكوّنات مشتركة (ScholarCard, Pagination...)
+    ├── Styles/app.tailwind.css
+    └── wwwroot/app.css    # ناتج بناء Tailwind — لا يُحرَّر يدويًا</pre>
+  </section>
+
+  <section class="card">
+    <h2>نموذج البيانات (AlSoque.Data)</h2>
+    <ul>
+      <li><strong><code>Family</code></strong> (أسرة): <code>Name</code>, <code>Description?</code>, <code>Slug</code> <span class="badge badge-done">منفَّذ</span></li>
+      <li><strong><code>Scholar</code></strong> (عالم): <code>AlKunyah</code>, <code>AlLaqab</code>, <code>AlIsm</code>, <code>AlNisbah</code>, <code>AlAb</code>, <code>AlNasab</code>, <code>AlMadhab</code>, <code>AlAkidah</code>, <code>AlMawlid</code>/<code>AlWufat</code> هجري + تحويل ميلادي، <code>WolidaBi</code>, <code>TowofiyaBi</code>, <code>Biography</code>, <code>ImagePath</code>, <code>Slug</code> + <code>FamilyId</code> (FK اختياري) <span class="badge badge-done">منفَّذ</span></li>
+      <li><strong><code>ScholarRelation</code></strong>: علاقة ذاتية شيخ↔تلميذ (<code>TeacherId</code>, <code>StudentId</code>) — سند علمي <span class="badge badge-done">منفَّذ</span></li>
+      <li><strong><code>Specialization</code></strong>: تخصص (حديث/فقه/تفسير...) — متعدد-لمتعدد مع <code>Scholar</code> <span class="badge badge-done">منفَّذ</span></li>
+      <li><strong><code>Book</code></strong>: <code>Title</code>, <code>Description?</code>, <code>ScholarId</code> (المؤلف)، <code>Status</code> (مطبوع/مخطوط/مفقود)، <code>PublicationYear?</code> <span class="badge badge-done">منفَّذ</span></li>
+      <li><strong><code>Manuscript</code></strong>: <code>Title</code>, <code>Description?</code>, <code>Category</code> (مخطوطة/وثيقة/إجازة/صورة)، <code>FilePath?</code>, <code>EstimatedYear?</code>, <code>ScholarId?</code>, <code>FamilyId?</code> <span class="badge badge-done">منفَّذ</span></li>
+      <li><strong><code>ApplicationUser : IdentityUser</code></strong>: <code>DisplayName</code>, <code>Bio?</code> <span class="badge badge-done">منفَّذ</span></li>
+      <li><strong><code>Contribution</code></strong> (مساهمة موحَّدة — نمط <code>Feedback</code> في AlMahmoud): <code>Type</code> (NewScholar/EditScholar/NewBook/NewManuscript)، <code>Status</code> (Pending/Approved/Rejected)، <code>TargetScholarId?</code>، <code>PayloadJson</code> (<code>jsonb</code> على PostgreSQL)، <code>SubmittedByUserId</code>، <code>ReviewedByUserId?</code>، <code>ReviewerNote?</code>، <code>CreatedAt</code>، <code>ReviewedAt?</code> <span class="badge badge-done">منفَّذ</span></li>
+      <li>الأدوار: <code>Admin</code>, <code>Member</code> (يُمنَح تلقائيًا عند التسجيل العام) <span class="badge badge-done">منفَّذ</span></li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2>سير المساهمة والمراجعة</h2>
+    <ol>
+      <li>زائر يسجّل حسابًا (تسجيل عام، لا تفعيل بريد إلزامي في MVP) → دور <code>Member</code> تلقائيًا.</li>
+      <li>من صفحة <code>/contribute</code>، يقترح عالمًا جديدًا أو تصحيحًا على عالم موجود → يُحفظ <code>Contribution</code> بحالة <code>Pending</code> ولا يظهر للعامة.</li>
+      <li>الإدارة (<code>/admin/contributions</code>) تراجع: قبول (يُطبَّق <code>PayloadJson</code> على <code>Scholar</code> الفعلي — إنشاء أو تعديل) أو رفض (مع <code>ReviewerNote</code>).</li>
+      <li>لا نشر فوري لأي محتوى من غير الإدارة — مطابق لمبدأ AlMahmoud.</li>
+    </ol>
+  </section>
+
+  <section class="card">
+    <h2>ملاحظات تنفيذية</h2>
+    <ul>
+      <li>إعادة استخدام منطق <code>ToGregorian()</code> (تحويل هجري↔ميلادي) من <code>A3lam/A3lam/Models/Extensions/DateHelper.cs</code> كمرجع — يُعاد كتابته في AlSoque.Data وليس استيرادًا مباشرًا (مشروع مستقل). <span class="badge badge-done">منفَّذ</span></li>
+      <li><code>IDbContextFactory&lt;AppDbContext&gt;</code> في الخدمات (Blazor Server دائرة طويلة العمر) — لا <code>DbContext</code> مباشر.</li>
+      <li>لا <code>*.razor.css</code> ولا <code>style="..."</code> — كل الأنماط في <code>app.css</code> عبر <code>@layer components</code>. <span class="badge badge-done">منفَّذ</span></li>
+      <li>هوية بصرية مستقلة عن AlMahmoud: تيل عميق + نحاسي على عاجي، خطوط Noto Kufi/Naskh Arabic. <span class="badge badge-done">منفَّذ</span></li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2>مراحل التنفيذ</h2>
+
+    <div class="phase done">
+      <span class="num">1</span>
+      <div><h3>التأسيس <span class="badge badge-done">تم</span></h3>
+      <p><code>.slnx</code> + <code>AlSoque.Data</code> (Scholar/Family/Specialization/ScholarRelation + AppDbContext + هجرة أولى) + <code>AlSoque.Web</code> (Blazor InteractiveServer).</p></div>
+    </div>
+
+    <div class="phase done">
+      <span class="num">2</span>
+      <div><h3>الكيانات الأساسية <span class="badge badge-done">تم</span></h3>
+      <p>بناء الكيانات في AlSoque.Data وتطبيق أول هجرة على PostgreSQL محلي بنجاح.</p></div>
+    </div>
+
+    <div class="phase done">
+      <span class="num">3</span>
+      <div><h3>Identity + تسجيل عام والأدوار <span class="badge badge-done">تم</span></h3>
+      <p>ASP.NET Core Identity مفعّل بتسجيل عام (بلا تأكيد بريد إلزامي)، أدوار Admin/Member مزروعة، تسجيل المستخدم الجديد يُمنح Member تلقائيًا، مسؤول مزروع من appsettings.</p></div>
+    </div>
+
+    <div class="phase done">
+      <span class="num">4</span>
+      <div><h3>Tailwind v4 + الهوية البصرية <span class="badge badge-done">تم</span></h3>
+      <p>بناء Tailwind عبر npx، هوية ألوان وخطوط مستقلة (تيل + نحاسي)، RTL كامل، إعادة تصميم صفحتي الدخول والتسجيل، شريط تنقّل يدرك الأدوار.</p></div>
+    </div>
+
+    <div class="phase done">
+      <span class="num">5</span>
+      <div><h3>عرض العلماء <span class="badge badge-done">تم</span></h3>
+      <p>صفحات التصفح (بحث/تصفية بالأسرة، القرن الهجري، التخصص) + صفحة عالم (سيرة، سند علمي، بطاقة بيانات) + 4 علماء بذرة تجريبيين بعلاقات شيخ↔تلميذ.</p></div>
+    </div>
+
+    <div class="phase done">
+      <span class="num">6</span>
+      <div><h3>الكتب والمخطوطات <span class="badge badge-done">تم</span></h3>
+      <p>كيانا <code>Book</code>/<code>Manuscript</code> + صفحتا تصفح (<code>/books</code>, <code>/manuscripts</code>) + ربط بصفحة العالم + بيانات بذرة.</p></div>
+    </div>
+
+    <div class="phase done">
+      <span class="num">7</span>
+      <div><h3>المساهمات والمراجعة <span class="badge badge-done">تم</span></h3>
+      <p>كيان <code>Contribution</code> + نموذج <code>/contribute</code> (ترجمة جديدة أو تصحيح، محمي بتسجيل دخول) + <code>/admin/contributions</code> لقبول أو رفض كل مساهمة مع تطبيق التغيير فعليًا على <code>Scholar</code>.</p></div>
+    </div>
+
+    <div class="phase done">
+      <span class="num">8</span>
+      <div><h3>لوحة الإدارة الكاملة <span class="badge badge-done">تم</span></h3>
+      <p>CRUD كامل: <code>/admin/scholars</code>، <code>/admin/books</code>، <code>/admin/manuscripts</code>، <code>/admin/families</code>، <code>/admin/specializations</code> + <code>/admin/users</code> لترقية/إزالة صلاحية المسؤول (مع حماية الحساب الحالي من تعديل دوره بنفسه).</p></div>
+    </div>
+
+    <div class="phase">
+      <span class="num">9</span>
+      <div><h3>النشر <span class="badge badge-todo">متبقّ</span></h3>
+      <p>Kestrel خلف Nginx على VPS Ubuntu (systemd) + Azure DevOps CI/CD + ربط www.AlSoque.net + SSL (Certbot).</p></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>التحقق</h2>
+    <ul>
+      <li><code>dotnet build</code> يبني الحل بلا أخطاء بعد كل مرحلة.</li>
+      <li><code>dotnet ef database update --project src/AlSoque.Data --startup-project src/AlSoque.Web</code> يُطبَّق بنجاح على PostgreSQL محلي.</li>
+      <li>تشغيل محلي (<code>dotnet run</code>): تسجيل حساب جديد → تسجيل دخول → تصفح علماء (بيانات بذرة) → تقديم مساهمة → تسجيل دخول كمسؤول → ظهورها في <code>/admin/contributions</code> → قبولها → ظهور التعديل في صفحة العالم العامة.</li>
+    </ul>
+  </section>
+
+</div>
+
+<footer>AlSoque.net — خطة المشروع — وُلِّدت بمساعدة Claude Code</footer>
+
+</body>
+</html>

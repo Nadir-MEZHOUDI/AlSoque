@@ -33,8 +33,16 @@ namespace AlSoque.Data.Migrations
                     b.Property<string>("Bio")
                         .HasColumnType("text");
 
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("DisplayName")
@@ -47,6 +55,10 @@ namespace AlSoque.Data.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("boolean");
@@ -94,6 +106,101 @@ namespace AlSoque.Data.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("AlSoque.Data.Entities.Book", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("PublicationYear")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ScholarId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ScholarId");
+
+                    b.HasIndex("Slug")
+                        .IsUnique();
+
+                    b.ToTable("Books");
+                });
+
+            modelBuilder.Entity("AlSoque.Data.Entities.Contribution", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("PayloadJson")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("ReviewedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ReviewedByUserId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ReviewerNote")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("SubmittedByUserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int?>("TargetScholarId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReviewedByUserId");
+
+                    b.HasIndex("SubmittedByUserId");
+
+                    b.HasIndex("TargetScholarId");
+
+                    b.ToTable("Contributions");
+                });
+
             modelBuilder.Entity("AlSoque.Data.Entities.Family", b =>
                 {
                     b.Property<int>("Id")
@@ -125,6 +232,58 @@ namespace AlSoque.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("Families");
+                });
+
+            modelBuilder.Entity("AlSoque.Data.Entities.Manuscript", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Category")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("EstimatedYear")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("FamilyId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("FilePath")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("ScholarId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FamilyId");
+
+                    b.HasIndex("ScholarId");
+
+                    b.HasIndex("Slug")
+                        .IsUnique();
+
+                    b.ToTable("Manuscripts");
                 });
 
             modelBuilder.Entity("AlSoque.Data.Entities.Scholar", b =>
@@ -418,6 +577,59 @@ namespace AlSoque.Data.Migrations
                     b.ToTable("ScholarSpecialization");
                 });
 
+            modelBuilder.Entity("AlSoque.Data.Entities.Book", b =>
+                {
+                    b.HasOne("AlSoque.Data.Entities.Scholar", "Scholar")
+                        .WithMany("Books")
+                        .HasForeignKey("ScholarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Scholar");
+                });
+
+            modelBuilder.Entity("AlSoque.Data.Entities.Contribution", b =>
+                {
+                    b.HasOne("AlSoque.Data.ApplicationUser", "ReviewedByUser")
+                        .WithMany()
+                        .HasForeignKey("ReviewedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("AlSoque.Data.ApplicationUser", "SubmittedByUser")
+                        .WithMany()
+                        .HasForeignKey("SubmittedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("AlSoque.Data.Entities.Scholar", "TargetScholar")
+                        .WithMany()
+                        .HasForeignKey("TargetScholarId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("ReviewedByUser");
+
+                    b.Navigation("SubmittedByUser");
+
+                    b.Navigation("TargetScholar");
+                });
+
+            modelBuilder.Entity("AlSoque.Data.Entities.Manuscript", b =>
+                {
+                    b.HasOne("AlSoque.Data.Entities.Family", "Family")
+                        .WithMany("Manuscripts")
+                        .HasForeignKey("FamilyId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("AlSoque.Data.Entities.Scholar", "Scholar")
+                        .WithMany("Manuscripts")
+                        .HasForeignKey("ScholarId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Family");
+
+                    b.Navigation("Scholar");
+                });
+
             modelBuilder.Entity("AlSoque.Data.Entities.Scholar", b =>
                 {
                     b.HasOne("AlSoque.Data.Entities.Family", "Family")
@@ -565,11 +777,17 @@ namespace AlSoque.Data.Migrations
 
             modelBuilder.Entity("AlSoque.Data.Entities.Family", b =>
                 {
+                    b.Navigation("Manuscripts");
+
                     b.Navigation("Scholars");
                 });
 
             modelBuilder.Entity("AlSoque.Data.Entities.Scholar", b =>
                 {
+                    b.Navigation("Books");
+
+                    b.Navigation("Manuscripts");
+
                     b.Navigation("StudentLinks");
 
                     b.Navigation("TeacherLinks");

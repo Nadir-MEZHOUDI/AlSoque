@@ -1,0 +1,131 @@
+@page "/admin/books/{Id:int}/edit"
+@attribute [Authorize(Roles = AppRoles.Admin)]
+@using AlSoque.Data.Entities
+@using AlSoque.Web.Features.Admin.Books
+@using AlSoque.Web.Shared
+@inject AdminBooksService BooksService
+@inject NavigationManager NavigationManager
+
+<PageTitle>@(Id == 0 ? "إضافة كتاب" : "تعديل كتاب") — الإدارة</PageTitle>
+
+<section class="page-hero">
+    <h1>@(Id == 0 ? "إضافة كتاب جديد" : "تعديل كتاب")</h1>
+</section>
+
+@if (book is null || scholars is null)
+{
+    <p class="text-ink-soft">جارٍ التحميل...</p>
+}
+else
+{
+    @if (errorMessage is not null)
+    {
+        <p class="field-error mb-4">@errorMessage</p>
+    }
+
+    <div class="form-card">
+        <div class="field">
+            <label class="field-label">العنوان</label>
+            <input class="field-input" @bind="book.Title" />
+        </div>
+        <div class="field">
+            <label class="field-label">المعرّف في الرابط (Slug)</label>
+            <div class="flex gap-2">
+                <input class="field-input" @bind="book.Slug" />
+                <button type="button" class="btn btn-outline" @onclick="GenerateSlug">توليد</button>
+            </div>
+        </div>
+        <div class="field">
+            <label class="field-label">المؤلِّف</label>
+            <select class="field-select" @bind="book.ScholarId">
+                @foreach (var scholar in scholars)
+                {
+                    <option value="@scholar.Id">@scholar.FullName</option>
+                }
+            </select>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-4">
+            <div class="field">
+                <label class="field-label">الحالة</label>
+                <select class="field-select" @bind="book.Status">
+                    <option value="@BookStatus.Printed">مطبوع</option>
+                    <option value="@BookStatus.Manuscript">مخطوط</option>
+                    <option value="@BookStatus.Lost">مفقود</option>
+                </select>
+            </div>
+            <div class="field">
+                <label class="field-label">سنة النشر (هـ)</label>
+                <input type="number" class="field-input" @bind="book.PublicationYear" />
+            </div>
+        </div>
+        <div class="field">
+            <label class="field-label">الوصف</label>
+            <textarea class="field-textarea" @bind="book.Description"></textarea>
+        </div>
+
+        <div class="flex gap-3 mt-4">
+            <button class="btn btn-primary" @onclick="SaveAsync">حفظ</button>
+            <a class="btn btn-outline" href="/admin/books">إلغاء</a>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private Book? book;
+    private List<Scholar>? scholars;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        scholars = await BooksService.GetScholarsAsync();
+
+        if (Id == 0)
+        {
+            book = new Book { ScholarId = scholars.FirstOrDefault()?.Id ?? 0 };
+        }
+        else
+        {
+            book = await BooksService.GetByIdAsync(Id);
+        }
+    }
+
+    private void GenerateSlug()
+    {
+        if (book is not null)
+        {
+            book.Slug = SlugHelper.Slugify(book.Title);
+        }
+    }
+
+    private async Task SaveAsync()
+    {
+        errorMessage = null;
+        if (book is null)
+        {
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(book.Title))
+        {
+            errorMessage = "عنوان الكتاب مطلوب.";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(book.Slug))
+        {
+            book.Slug = SlugHelper.Slugify(book.Title);
+        }
+
+        if (await BooksService.IsSlugTakenAsync(book.Slug, Id == 0 ? null : Id))
+        {
+            errorMessage = "هذا المعرّف (Slug) مستخدَم بالفعل، اختر معرّفًا آخر.";
+            return;
+        }
+
+        await BooksService.SaveAsync(book);
+        NavigationManager.NavigateTo("/admin/books");
+    }
+}

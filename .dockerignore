@@ -1,0 +1,43 @@
+.git
+.gitignore
+.gitattributes
+
+# IDE / OS
+.vs
+.vscode
+.idea
+.claude
+*.user
+*.suo
+*.swp
+.DS_Store
+Thumbs.db
+
+# Docs — not needed in the image
+*.md
+docs/
+AGENTS.md
+PLAN.html
+
+# Build outputs (rebuilt inside the image)
+**/bin/
+**/obj/
+
+# Tailwind binary committed for local dev is Windows-only — fetched at build time
+src/AlSoque.Web/tools/
+
+# Tailwind generated artifact — regenerated during image build
+src/AlSoque.Web/wwwroot/app.css
+
+# Node (Tailwind CLI resolution for local Windows dev only — image fetches its own binary)
+src/AlSoque.Web/node_modules/
+
+# CI / deployment files for the host, not the image
+.github/
+.git/workflows/
+
+# Compose files (used on the host, not the image)
+docker-compose.yml
+docker-compose.override.yml
+.dockerignore
+Dockerfile

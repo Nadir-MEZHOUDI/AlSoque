@@ -1,0 +1,98 @@
+@page "/admin/specializations"
+@attribute [Authorize(Roles = AppRoles.Admin)]
+@using AlSoque.Data.Entities
+@using AlSoque.Web.Features.Admin.Specializations
+@inject AdminSpecializationsService SpecializationsService
+
+<PageTitle>إدارة التخصصات — الإدارة</PageTitle>
+
+<section class="page-hero">
+    <h1>إدارة التخصصات العلمية</h1>
+</section>
+
+<div class="form-card mb-8">
+    <div class="flex gap-3 items-end">
+        <div class="field m-0 flex-1">
+            <label class="field-label">@(editingId is null ? "تخصص جديد" : "تعديل التخصص")</label>
+            <input class="field-input" @bind="name" />
+        </div>
+        <button class="btn btn-primary" @onclick="SaveAsync">@(editingId is null ? "إضافة" : "حفظ")</button>
+        @if (editingId is not null)
+        {
+            <button class="btn btn-outline" @onclick="CancelEdit">إلغاء</button>
+        }
+    </div>
+</div>
+
+@if (specializations is null)
+{
+    <p class="text-ink-soft">جارٍ التحميل...</p>
+}
+else
+{
+    <div class="table-wrap">
+        <table class="data-table">
+            <thead><tr><th>الاسم</th><th></th></tr></thead>
+            <tbody>
+                @foreach (var specialization in specializations)
+                {
+                    <tr>
+                        <td>@specialization.Name</td>
+                        <td class="flex gap-2">
+                            <button class="btn btn-outline" @onclick="() => Edit(specialization)">تعديل</button>
+                            <button class="btn btn-outline" @onclick="() => DeleteAsync(specialization.Id)">حذف</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@code {
+    private List<Specialization>? specializations;
+    private int? editingId;
+    private string name = string.Empty;
+
+    protected override async Task OnInitializedAsync() => await LoadAsync();
+
+    private async Task LoadAsync() => specializations = await SpecializationsService.GetAllAsync();
+
+    private void Edit(Specialization specialization)
+    {
+        editingId = specialization.Id;
+        name = specialization.Name;
+    }
+
+    private void CancelEdit()
+    {
+        editingId = null;
+        name = string.Empty;
+    }
+
+    private async Task SaveAsync()
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            return;
+        }
+
+        if (editingId is null)
+        {
+            await SpecializationsService.AddAsync(name);
+        }
+        else
+        {
+            await SpecializationsService.UpdateAsync(editingId.Value, name);
+        }
+
+        CancelEdit();
+        await LoadAsync();
+    }
+
+    private async Task DeleteAsync(int id)
+    {
+        await SpecializationsService.DeleteAsync(id);
+        await LoadAsync();
+    }
+}
